@@ -1,0 +1,280 @@
+%! Tex program = xelatex
+\documentclass{article}
+
+%中文
+%\usepackage[UTF8]{ctex}
+%数学公式
+\usepackage{amsmath,amssymb}
+%\usepackage{ntheorem}
+\usepackage{amsthm}
+%边界
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}%table package
+%Table
+\usepackage{multirow,booktabs}
+\usepackage{makecell}
+%字体颜色
+\usepackage{color}
+\usepackage[dvipsnames]{xcolor}  % 更全的色系
+%代码
+\usepackage[OT1]{fontenc}
+% MATLAB 代码风格
+\usepackage[framed,numbered,autolinebreaks,useliterate]{/Users/anye_zhenhaoyu/Desktop/Latex/mcode}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+%插图
+\usepackage{graphicx}
+%改变item格式
+\usepackage{enumerate}
+%物理
+\usepackage{physics}
+%extra arrows
+\usepackage{extarrows}
+% caption（居中指令）
+%\usepackage[justification=centering]{caption}
+\usepackage{caption}
+% htpb
+\usepackage{stfloats}
+% pdf 拼接
+\usepackage{pdfpages}
+% 超链接url
+\usepackage{url}
+
+\def\RR{\mathbb{R}}
+\def\ZZ{\mathbb{Z}}
+\def\EE{\mathbb{E}}
+
+\def\Trsp#1{#1^{\mathcal{T}}}
+
+\def\bw{\boldsymbol{\omega}}
+\def\ba{\boldsymbol{a}}
+\def\bb{\boldsymbol{b}}
+\def\bc{\boldsymbol{c}}
+\def\bd{\boldsymbol{d}}
+\def\be{\boldsymbol{e}}
+\def\bf{\boldsymbol{f}}
+\def\bg{\boldsymbol{g}}
+\def\bt{\boldsymbol{t}}
+\def\bu{\boldsymbol{u}}
+\def\bv{\boldsymbol{v}}
+\def\bx{\boldsymbol{x}}
+\def\by{\boldsymbol{y}}
+\def\bz{\boldsymbol{z}}
+
+\def\bA{\boldsymbol{A}}
+\def\bB{\boldsymbol{B}}
+\def\bC{\boldsymbol{C}}
+\def\bE{\boldsymbol{E}}
+\def\bO{\boldsymbol{O}}
+\def\bP{\boldsymbol{P}}
+\def\bQ{\boldsymbol{Q}}
+\def\bX{\boldsymbol{X}}
+\def\bY{\boldsymbol{Y}}
+
+\def\Esolve{\textcolor{blue}{Solve: }}
+\def\Eproof{\textcolor{blue}{Proof: }}
+
+\def\suminf#1{\sum_{#1=-\infty}^{+\infty}}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+%\graphicspath{{figures/}}
+
+
+\begin{document}
+\title{Homework 9}
+\author{Zhen}
+\maketitle
+
+\section*{Problem 1}
+$$
+\begin{aligned}
+	\min_{x_1,x_2}\ \ 
+	&f(x_1,x_2)=\frac{1}{2}x_1^2+x_1x_2+x_2^2-x_1-3x_2
+	\\
+	\mbox{s.t.   }&x_1+2x_2=1
+\end{aligned}
+$$
+
+\begin{enumerate}[(a)]
+	\item 
+		\[
+		    \begin{aligned}
+				f(x_1,x_2)=&
+				\frac{1}{2}x_1^2+x_1x_2+x_2^2-x_1-3x_2
+				\\=&
+				\frac{1}{2}(1-2x_2)^2+(1-2x_2)x_2+x_2^2-(1-2x_2)-3x_2
+				\\=&
+				x_2^2-2x_2-\frac{3}{4}
+				\\=&
+				(x_2-1)^2-\frac{7}{4}
+		    \end{aligned}
+		\]
+		Then we have $x^*_1=-1,x^*_2=1$.
+	\item
+		Lagrange equations are:
+		\[
+		    \begin{aligned}
+		        &x^*_1+2x^*_2=1
+				\\&
+				x_1^*+x_2^*-1+\lambda^*=0
+				\\&
+				x_1^*+2x_2^*-3+2\lambda^*=0
+		    \end{aligned}
+		\]
+		Thus $x_1^*=-1,x_2^*=1,\lambda^*=1$.
+\end{enumerate}
+
+\section*{Problem 2}
+
+\[
+    \begin{aligned}
+		\min_{\bx}\ \ 
+		&\frac{1}{2}\bx^T\bQ\bx+\bg^T\bx+c
+		\\\mbox{s.t.   }&
+		\bA\bx=\bb
+    \end{aligned}
+\]
+\begin{enumerate}[(a)]
+	\item
+		The Lagrange condition is: ($\boldsymbol{\lambda}\in\RR^k$)
+		\[
+		    \begin{aligned}
+		       &\bA\bx=\bb
+			   \\&
+			   \bQ\bx+\bg-\bA^T\boldsymbol{\lambda}=\boldsymbol{0}
+		    \end{aligned}
+		\]
+	\item
+		\begin{lemma}
+			Let $\bQ\succ\bO\in\RR^{n\times n}$, $\bA\in\RR^{k\times n}$ and $\rank\bA=k$, then $\bA\bQ^{-1}\bA^T\succ\bO$.
+		\end{lemma}
+
+		\begin{proof}
+			$\forall \bx\in\RR^k$:
+		    \[
+		        \begin{aligned}
+					\bx^T\bA\bQ^{-1}\bA^T\bx
+					=&
+					(\bA^T\bx)^T\bQ^{-1}(\bA^T\bx)>0
+		        \end{aligned}
+		    \]
+			Thus $\bA\bQ^{-1}\bA^T\succ\bO$.
+		\end{proof}
+		
+		By Lagrange condition:
+		$\bx+\bQ^{-1}\bg-\bQ^{-1}\bA^T\boldsymbol{\lambda}=0$.
+		Then we have 
+		$\bb+\bA\bQ^{-1}\bg-\bA\bQ^{-1}\bA^T\boldsymbol{\lambda}$, which means that 
+		$\boldsymbol{\lambda}=(\bA\bQ^{-1}\bA^T)^{-1}\qty(\bb+\bA\bQ^{-1}\bg)$.
+		
+		Thus
+		\begin{equation*}
+			\bx=\bQ^{-1}\bA^T(\bA\bQ^{-1}\bA^T)^{-1}\qty(\bb+\bA\bQ^{-1}\bg)-\bQ^{-1}\bg
+		\end{equation*}
+		\newpage
+	\item
+		Pluging $\bQ=\bE,\bg=-\bx_0,c=\dfrac{1}{2}\bx_0^T\bx$ into (b):
+		\[
+		    \begin{aligned}
+		        \bx&=\bA^T(\bA\bA^T)^{-1}\qty(\bb-\bA\bx_0)+\bx_0
+				\\ &\xlongequal{\bx_0=\boldsymbol{0}}
+				\bA^T(\bA\bA^T)^{-1}\bb
+		    \end{aligned}
+		\]
+	\item
+		\[
+		    \begin{aligned}
+		        \bx&=\bw(\bw^T\bw)^{-1}\qty(b-\bw^T\bx_0)+\bx_0
+		    \end{aligned}
+		\]
+		\[
+		    \begin{aligned}
+				d=&\norm{\bx-\bx_0}
+				\\=&
+				\norm{\bw(\bw^T\bw)^{-1}\qty(b-\bw^T\bx_0)}
+				\\=&
+				\frac{\norm{\bw\qty(b-\bw^T\bx_0)}}{\norm{\bw^T\bw}}
+				\\=&
+				\frac{\norm{b-\bw^T\bx_0}}{\norm{\bw}}
+		    \end{aligned}
+		\]
+\end{enumerate}
+
+\section*{Problem 3}
+Lagrange condition is :
+\[
+    \begin{aligned}
+        &x_1^2+4x_2^2=1
+		\\&
+		x_1-8\lambda x_2=0
+		\\&
+		x_2-2\lambda x_1=0
+    \end{aligned}
+\]
+Then we have $x_1^2=4x_2^2\Rightarrow x_1=\pm\frac{\sqrt{2}}{2},x_2=\pm\frac{\sqrt{2}}{4}$.\\
+\\
+Thus the minimum of $x_1x_2$ is $-\dfrac{1}{4}$ with 
+$
+\begin{cases}
+    x_1=-\frac{\sqrt{2}}{2}\\
+	x_2=\frac{\sqrt{2}}{4}
+\end{cases} \mbox{or}\ \ \ 
+\begin{cases}
+    x_1=\frac{\sqrt{2}}{2}\\
+	x_2=-\frac{\sqrt{2}}{4}
+\end{cases}
+$.
+
+
+\section*{Problem 4}
+
+\begin{enumerate}[(a)]
+	\item
+		The Lagrange condition is:
+		\[
+		    \begin{aligned}
+				&\norm{\bx}^2_2=1
+				\\&
+				\bA\bx+2\lambda'\bx=0
+		    \end{aligned}
+		\]
+		which means that $\bx^*$ is a eigenvector.
+		Then ${\bx^*}^T\bA\bx^*={\bx^*}^T\lambda\bx^*=\lambda$.
+
+		Thus $\min_{\bx}\bx^T\bA\bx=\min_i\lambda_i=\lambda_1$.
+	\item
+		\begin{enumerate}[i)]
+			\item 
+				Lagrange condition is: ($\exists \lambda_1,\lambda_2\in\RR$)
+				\[
+				    \begin{aligned}
+				        &\norm{\bx}^2_2=1
+						\\&
+						\bv^T\bx=0
+						\\&
+						\bA\bx+2\lambda_1\bx+\lambda_2\bv_1=0
+				    \end{aligned}
+				\]
+				Then $\exists c_0=-2\lambda_1,c_1=-\lambda_2$, $\bA\bx^*=c_0\bx^*+c_1\bv_1$.
+			\item
+				$\bv_1^T\bA\bx^*=c_0\bv^T\bx^*+c_1\bv_1^T\bv_1$ where $\mbox{LHS}=(\bA^T\bv_1)^T\bx^*=\lambda_1\bv_1^T\bx^*=0$ and $\mbox{RHS}=c_1\norm{\bv_1}^2$.
+				Then we attain $c_1=0$.
+			\item
+				\begin{lemma}
+					An eigenvector orthogonal to $\bv_1$ must be associated to one of the eigenvalues $\lambda_2,\dots,\lambda_n$.
+				\end{lemma}
+				\begin{proof}
+					Suppose that $\bv_i$ is associated to $\lambda_i$ and $\bv_j$ is associated to $\lambda_j$.
+					Then $\bv_i^T\bA\bv_j=\lambda_i\bv_i^T\bv_j=\lambda_j\bv_i^T\bv_j\Rightarrow\bv_i^T\bv_j=0$. Thus $\mbox{span}{(\bv_1,\dots,\bv_n)}=\RR^n$.
+				\end{proof}
+
+				Finally we have $\min_{\bv_1^T\bx=0}\bx^T\bA\bx=\min_{i=2,\dots,n}\lambda_i\norm{\bx^*}_2^2=\min_{i=2,\dots,n}\lambda_i=\lambda_2$. Like (a) we have $\bx^*$ is associated to $\lambda_2$.
+		\end{enumerate}
+\end{enumerate}
+
+
+\end{document}
+
+

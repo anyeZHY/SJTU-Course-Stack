@@ -1,0 +1,320 @@
+%! Tex program = xelatex
+\documentclass{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}%table package
+\usepackage{multirow,booktabs}
+\usepackage{makecell}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{enumerate}
+
+\def\RR{\mathbb{R}}
+\def\bw{\boldsymbol{\omega}}
+\def\bb{\boldsymbol{b}}
+\def\bd{\boldsymbol{d}}
+\def\bx{\boldsymbol{x}}
+\def\by{\boldsymbol{y}}
+\def\bz{\boldsymbol{z}}
+
+\def\btheta{\boldsymbol{\theta}}
+
+\def\bA{\boldsymbol{A}}
+\def\bB{\boldsymbol{B}}
+\def\bC{\boldsymbol{C}}
+\def\bX{\boldsymbol{X}}
+\def\bY{\boldsymbol{Y}}
+\def\bZ{\boldsymbol{Z}}
+
+\def\vvert{\vert\vert}
+\def\dd{\mathrm{d}}
+
+\def\convex#1#2{\theta#1+(1-\theta)#2}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{proof}{Proof}
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+\title{Homework 2}
+\author{Zhen Haoyu}
+\maketitle
+
+
+\section*{Problem 1}
+
+Let
+$$
+f(\bx)=\bA\bx+\bb.
+$$
+If $C$ is convex, then $\forall \bx,\by\in f^{-1}(C)$ (i.e., $f(\bx),f(\by)\in C$), $\forall \theta \in (0,1)$, considering that:
+$$
+\begin{aligned}
+	f\big(\theta \bx+(1-\theta)\by\big)
+	&=\theta \bA\bx+\theta \bb+(1-\theta)\bA\by+(1-\theta)\bb
+	\\
+	&=\theta f(\bx)+(1-\theta)f(\by)
+	\\
+	&\in C
+\end{aligned}
+$$
+Note that: the last line of the equation uses the property of convex set. Then $(\theta \bx+(1-\theta)\by\in f^{-1}(C)$.
+
+\section*{Problem 2}
+
+Trivially, $C$ is a nonempty set.
+
+$\forall \bx,\by \in C$, $\exists \bx_1,\by_1\in C_1 \land \bx_2,\by_2\in C_2$, $s.t.$ $\bx_1-\bx_2=\bx \land \by_1-\by_2=\by$.
+
+Then $\forall\theta in (0,1)$, we have:
+$$
+\theta \bx +(1-\theta)\by=\theta\bx_1+(1-\theta)\by_1-\theta\bx_2-(1-\theta)\by_2
+$$
+
+By $C_1,C_2$ is convex, $\exists \bz_1\in C_1 \land \bz_2\in C_2$, $\theta \bx +(1-\theta)\by=\bz_1-\bz_2\in C$, which means that $C$ is convex.
+
+Trivially, $\boldsymbol{0}\in C$. (If not, then $\exists \bx \in C_1,C_2$, which means $C_1\cap C_2\neq\varnothing$)
+
+\section*{Problem 3}
+
+\begin{enumerate}[(a)]
+	\item 
+		$\forall \bx_0,\by_0 \in int\ C$, $\exists\ \varepsilon>0$,
+		$$\big\{\bx|\ (\bx-\bx_0)^2\le\varepsilon^2\big\}\subset C\land\big\{\by|\ (\by-\by_0)^2\le\varepsilon^2\big\}\subset C.$$
+
+		For the sake of simplicity, let 
+		$X$ denotes $\big\{\bx|\ (\bx-\bx_0)^2\le\varepsilon^2\big\}$, 
+		$Y$ denotes $\big\{\by|\ (\by-\by_0)^2\le\varepsilon^2\big\}$
+		and 
+		$\bz_0$ denotes $\theta \bx_0+(1-\theta)\by_0$.
+
+		Then $\forall
+		\bz\in\big\{\bx|(\bx-\bz_0)^2\le\varepsilon^2\big\}$,
+		$
+		\exists
+		\bz-\bz_0+\bx_0\in X 
+		\land
+		\bz-\bz_0+\by_0\in Y
+		$, we have
+		$$\bz=\theta(\bz-\bz_0+\bx_0)+(1-\theta)(\bz-\bz_0+\by_0).$$
+
+		Thus, $\bz\in C$, which means that $\theta \bx_0+(1-\theta)\by_0$ is a interior point of $C$.
+		
+		Therefore, $\theta \bx_0+(1-\theta)\by_0\in int\ C$ and $int\ C$ is convex.
+
+		\newpage
+	\item
+		$\forall \bx_0,\by_0 \in \bar{C}$, we have 2 infinite sequence $\{\bx_n\},\{\by_n\}$, such that
+		$$
+		\lim_{n\to\infty}\bx_n=\bx_0
+		\land
+		\lim_{n\to\infty}\by_n=\by_0,
+		$$
+		and
+		$$
+		\bx_n,\by_n\in C\ (\forall n).
+		$$
+		
+		Thus we have: $\forall \theta\in(0,1)$, 
+		$$
+		\lim_{n\to\infty}(\convex{\bx_n}{\by_n})=\convex{\bx_0}{\by_0}
+		$$
+		where $\forall n$, $\convex{\bx_n}{\by_n}\in C$. Thus  $\convex{\bx_0}{\by_0}\in \bar{C}$, which means that $\bar{C}$ is convex.
+\end{enumerate}
+
+\section*{Problem 4}
+
+\begin{enumerate}[(a)]
+	\item 
+		Let 
+		$
+		\btheta_{im}
+		\equiv
+		(\theta_{i1},\theta_{i2},\dots,\theta_{im})^T
+		$, $
+		\bX_{m}
+		\equiv
+		(\bx_{i1},\bx_{i2},\dots,\bx_{im})^T
+		$ and $
+		\bY_{n}
+		\equiv
+		(\by_{i1},\by_{i2},\dots,\by_{in})^T
+		$.
+
+		$\forall \bx,\by\in C$, 
+		$\exists \btheta_{1m},\btheta_{2n},\bX_{m},\bY_{n}$,
+		such that 
+		$$
+		\begin{cases}
+			&
+			\forall k\in\{1,2,\dots,m\}:
+			\theta_{1k}\ge0 \land \bx_{1k}\in S
+			\\
+			&
+			\bx=\btheta_{1m}^T\bX_{m}
+			\\
+			&
+			\forall l\in\{1,2,\dots,n\}:
+			\theta_{2k}\ge0 \land \by_{2k}\in S
+			\\
+			&
+			\by=\btheta_{2n}^T\bY_{n}
+			\\
+			&
+			\sum_{k=1}^m\theta_{1k}=\sum_{l=1}^n\theta_{2l}=1
+		\end{cases}		
+		$$
+
+		Then $\forall\theta\in(0,1)$:
+		$$
+		\convex{\bx}{\by}=
+		\begin{bmatrix}
+			\theta\btheta_{1m}^T & (1-\theta)\btheta_{2n}^T
+		\end{bmatrix}
+		\begin{bmatrix}
+			\bX_m
+			\\
+			\bY_n
+		\end{bmatrix}
+		$$
+
+		Let $\btheta_{3,m+n}$ denote 
+		$
+		\begin{bmatrix}
+			\theta\btheta_{1m}^T & (1-\theta)\btheta_{2n}^T
+		\end{bmatrix}
+		$ and $\bZ$ denote
+		$
+		\begin{bmatrix}
+			\bX_m
+			\\
+			\bY_n
+		\end{bmatrix}
+		$.
+
+		Trivially, for every row vector $\bz_i$ in $\bZ$: $\bz_i\in S$ and for every element $t$ in $\btheta_{3,m+n}$: $t\ge0$.
+
+		Also, $$sum(\btheta_{3,m+n})=
+		\theta\sum_{k=1}^m\theta_{1k}
+		+
+		(1-\theta)\sum_{l=1}^n\theta_{2l}=1
+		$$
+		
+		Thus $\convex{\bx}{\by}\in C$ and $C$ is convex.
+	\item
+		The defination of $conv\ S$ is the smallest convex set containing S.
+
+		$\forall \bx\in C$, by the defination of $C$, we have
+		$\bx=\sum_{i=1}^m\theta_i\bx_i$, where 
+		$
+		\forall i\in\{1,2,\dots,m\}:\theta_i>0
+		\land
+		\sum_{i=1}^m\theta_i=1
+		$
+
+		Then considering that
+		$$
+		\begin{aligned}
+		\bx
+		&=
+		\theta_1\bx_1+(1-\theta_1)
+		\sum_{i=2}^m\frac{\theta_i}{1-\theta_1}\bx_i
+		\\
+		&=
+		\theta_1\bx_1+(1-\theta_1)
+		\bigg[
+			\frac{\theta_2}{1-\theta_1}\bx_2
+			+
+			\sum_{i=3}^m\frac{\theta_i}
+			{1-\frac{\theta_2}{1-\theta_1}}\bx_i
+		\bigg]
+		\\
+		&
+		\dots
+		\end{aligned}
+		$$
+
+		The above equation demonstrates the decomposition of $\bx$. To prove $\bx\in conv S$, we could to prove $\sum_{i=2}^m\frac{\theta_i}{1-\theta_1}\bx_i\in conv S$ where $\sum_{i=2}^m\frac{\theta_i}{1-\theta_1}=1$. By finite steps we could only to prove $\bx_m\in conv S$.
+
+		Thus we have $\bx\in conv S$. Then $C\subset conv S$.
+
+		Obviously $S\subset C$. By $C$ is convex we have $conv S\subset C$.
+
+		Therefore $C= conv S$.
+\end{enumerate}
+
+\newpage
+\section*{Problem 5}
+
+The defination of \textbf{Vonoroi region} is 
+$$
+V=
+\{
+	\bx\in\RR:
+	\vvert\bx-\bx_0\vvert_2\le\vvert\bx-\bx_i\vvert_2,
+	i=1,2,\dots,K
+\}.
+$$
+Let 
+$
+V_i=
+\{
+	\bx\in\RR:
+	\vvert\bx-\bx_0\vvert_2\le\vvert\bx-\bx_i\vvert_2
+\}
+$. Then $V=\bigcap_{i=1}^KV_i$.
+
+\begin{lemma}
+	$\vvert\bx-\bx_0\vvert_2\le\vvert\bx-\bx_i\vvert_2$
+	if and only if 
+	$\bA_i(\bx-\dfrac{\bx_0+\bx_i}{2})\le0$, 
+	where $\bA_i=(\bx_i-\bx_0)^T$.
+\end{lemma}
+
+\begin{proof}
+	$$
+	\begin{aligned}
+		&
+		\vvert\bx-\bx_0\vvert_2\le\vvert\bx-\bx_i\vvert_2
+		\\
+		\iff
+		&
+		(\bx-\bx_0)^T(\bx-\bx_0)\le(\bx-\bx_i)^T(\bx-\bx_i)
+		\\
+		\iff
+		&
+		2(\bx_i-\bx_0)^T\bx+\bx_0^T\bx_0-\bx_i^T\bx_i \le 0
+		\\
+		\iff
+		&
+		2(\bx_i-\bx_0)^T\bx-(\bx_i-\bx_0)^T(\bx_i+\bx_0)\le0
+		\\
+		\iff
+		&
+		(\bx_i-\bx_0)^T(\bx-(\bx_i+\bx_0)/2)\le0
+	\end{aligned}
+	$$
+	Q.E.D.
+\end{proof}
+
+Thus, $\forall \bx_i$, $\exists \bA_i\in\RR^{1\times n},b_i\in\RR$, $s.t.\ V_i=\{\bx:\bA_i\bx\le b_i\}$.
+Then let 
+$\bA=
+\begin{bmatrix}
+\bA_1\\
+\bA_2\\
+\vdots\\
+\bA_n
+\end{bmatrix}$
+and 
+$\bb=
+\begin{bmatrix}
+b_1\\
+b_2\\
+\vdots\\
+b_n
+\end{bmatrix}$.
+
+Therefore, $V=\bigcap_{i=1}^KV_i=\{\bA\bx\le\bb\}$
+\end{document}
+

@@ -1,0 +1,226 @@
+%! Tex program = xelatex
+\documentclass{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{ntheorem}
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}%table package
+%Table
+\usepackage{multirow,booktabs}
+\usepackage{makecell}
+%代码
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+%插图
+\usepackage{graphicx}
+%改变item格式
+\usepackage{enumerate}
+%字体颜色
+\usepackage{color}
+%物理
+\usepackage{physics}
+%extra arrows
+\usepackage{extarrows}
+
+\def\RR{\mathbb{R}}
+\def\ZZ{\mathbb{Z}}
+\def\EE{\mathbb{E}}
+\def\bw{\boldsymbol{\omega}}
+\def\bx{\boldsymbol{x}}
+\def\by{\boldsymbol{y}}
+\def\bb{\boldsymbol{b}}
+\def\bd{\boldsymbol{d}}
+\def\vvert{\vert\vert}
+\def\bA{\boldsymbol{A}}
+\def\bB{\boldsymbol{B}}
+\def\bC{\boldsymbol{C}}
+\def\bO{\boldsymbol{O}}
+
+\def\Esolve{\textcolor{blue}{Solve: }}
+\def\Eproof{\textcolor{blue}{Proof: }}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{proof}{Proof}
+\newtheorem*{theorem}{Theorem}
+
+
+\begin{document}
+\title{Homework 4}
+\author{Zhen}
+\maketitle
+
+
+\section*{problem 1}
+
+$$
+H(x)=\sum_{i=1}^n -x_i\log{x_i}
+$$
+\Esolve
+\begin{enumerate}[(a)]
+	\item 
+		Apparently, $\log{x}$ is concave. By the assumption that $\norm{\bx}_0=k$ and the first $k$ components of $\bx$ are nonzero, we have
+		$$
+		\sum_{i=1}^nx_i(-\log{x_i})
+		=
+		\sum_{i=1}^kx_i\log{\frac{1}{x_i}}
+		\le
+		\log\qty({\sum_{i=1}^k\frac{1}{x_i}\times x_i})
+		=
+		\log{k}
+		\le
+		\log{n}
+		$$
+
+	\item
+		$\forall i,x_i>0$, we have
+		$$
+		\pdv{f}{x_i}{x_j}=
+		\begin{cases}
+			0 &\mbox{ if }i\neq j \\
+			-1/{x_i} &\mbox{ if } i = j
+		\end{cases}
+		$$
+		which means that $H(x)$ is strictly concave (every eigenvalues of $\nabla^2 f$ are negative).
+
+		Let $C \stackrel{def}{=} \qty{\bx\in\Delta_{n-1}:\bx>\boldsymbol{0}}$. Then we hold $\forall \bx\in C$, $H(\bx)\le\log n=H([1/n,\dots,1/n]^\mathcal{T})$ and $[1/n,\dots,1/n]^\mathcal{T}$ is the \textbf{unique} maximum.
+
+		Also $\forall \bx\in \Delta_{n-1}/C$, $H(\bx)\le\log\norm{\bx}_2<\log n$.
+
+		Thus $[1/n,\dots,1/n]^\mathcal{T}$ is the \textbf{unique} maximum of $H(\bx)$.
+\end{enumerate}
+
+\section*{problem 2}
+
+\begin{enumerate}[(a)]
+	\item 
+		\Eproof
+		$$
+		\begin{aligned}
+			&
+			\frac{f(\mu)-f(s)}{\mu-s}
+			\le
+			\frac{f(u)-f(\mu)}{u-\mu}
+			\\
+			\iff&
+			uf(\mu)-(u-\mu)f(s)\le(\mu-s)f(u)+sf(\mu)
+			\\
+			\iff&
+			f(\mu)
+			\le
+			\frac{u-\mu}{u-s}f(s)+\frac{\mu-s}{u-s}f(u)
+			\\
+			\iff&
+			f(\frac{u-\mu}{u-s}s+\frac{\mu-s}{u-s}u)
+			\le
+			\frac{u-\mu}{u-s}f(s)+\frac{\mu-s}{u-s}f(u)
+			\\
+			\Longleftarrow\ &
+			f \mbox{ is convex.}
+		\end{aligned}
+		$$
+	\item
+		$\exists \beta\in \RR$ such that $f(x)\ge f(\mu)+\beta(x-\mu)$.
+
+		\Eproof Let 
+		$$
+		\beta=\sup_{a<s<\mu}\frac{f(\mu)-f(s)}{\mu-s}
+		$$
+		Case 1 \textcolor{blue}{$\mu<x<b$:}
+
+		By (a) we have $\forall a<s<\mu:$
+		$$
+		\frac{f(\mu)-f(s)}{\mu-s}
+		<
+		\frac{f(x)-f(\mu)}{x-\mu}
+		$$
+		Thus 
+		$
+		\beta=\sup_{a<s<\mu}\dfrac{f(\mu)-f(s)}{\mu-s}
+		<
+		\dfrac{f(x)-f(\mu)}{x-\mu}
+		$, which means $\beta(x-\mu)+f(\mu)<f(x)$.
+
+		Case 2 \textcolor{blue}{$a<x<\mu$:}
+
+		Obviously, 
+		$$
+		\frac{f(\mu)-f(x)}{\mu-x}
+		\le
+		\sup_{a<s<\mu}\frac{f(\mu)-f(s)}{\mu-s}=\beta
+		$$
+		Thus  $\beta(x-\mu)+f(\mu)\le f(x)$.
+
+		Case 3 \textcolor{blue}{$x=\mu$:} The proof is trivial.
+
+	\item
+		By (b), $\exists \beta\in\RR,\forall x\in(a,b):f(x)\ge f(\mu)+\beta(x-\mu)$. Then $f(X)\ge f(\mu)+\beta(X-\mu)$.
+
+		Finally,
+		$$
+		\begin{aligned}
+			\EE[f(X)]
+			&=
+			\int_a^b\Pr(X=x)f(X=x)\dd x
+			\\&\ge
+			\int_a^b\Pr(X=x)\qty[f(\mu)+\beta(x-\mu)]\dd x
+			\\&=
+			f(\mu)+\beta(\mu-\mu)
+			\\&=
+			f\qty(\EE[X])
+		\end{aligned}
+		$$
+\end{enumerate}
+
+\section*{problem 3}
+
+$$
+S=\qty{
+	\bx=(x_1,x_2)\in\RR^2:
+	\max\qty{\norm{\bA\bx+\bb}^3,\log(1+e^{3x_1+2x_2})}\le2
+}
+$$
+\Esolve convex.
+
+We have some \textcolor{blue}{true} propositions as follows:
+\begin{enumerate}[1.]
+	\item If $f:\RR^n\to\RR$ is convex, then $f(\bA\bx+\bb)$ is also convex ($\forall\bA\in\RR^{n\times m},\bx\in\RR^m,\bb\in\RR^n$).
+	\item If $f:\RR^n\to\RR,g:\RR^n\to\RR$ are convex, then $h=\max\qty{f,g}$ is convex.
+	\item If $f:\RR^n\to\RR$ is convex, then $S=\qty{\bx:f(\bx)\le Const}$ is convex.
+\end{enumerate}
+
+First we have: $\norm{\bx}^3$ and 
+$\log\qty(1+e^x)$ are convex.
+
+By proposition 1 we have 
+$\norm{\bA\bx+\bb}^3$and $\log(1+e^{3x_1+2x_2})$ are convex.
+
+Then by proposition 2, $\max\qty{\norm{\bA\bx+\bb}^3,\log(1+e^{3x_1+2x_2})}$ is convex.
+
+Thus, by proposition 4, $S$ is convex.
+\section*{problem 4}
+
+\begin{enumerate}[(a)]
+	\item 
+		\Esolve
+		It is a convex optimization problem.
+
+		The objective function 
+		$f(\bx)= 
+		\bx^\mathcal{T}
+		\mqty[1 & -1 \\ -1 & 1]
+		\bx+\mqty[1 & 1]\bx
+		$.
+		By the fact that $\mqty[1 & -1 \\ -1 & 1]\succeq \bO$, $f(\bx)$ is convex.
+
+		Inequality constraint function $g(\bx) = (x_1-x_2)^2 + 4x_1x_2 + e^{x_1+x_2}=(x_1+x_2)^2+e^{x_1+x_2}$. Also, $g$ is convex because $(x_1+x_2)^2$ and $e^{x_1+x_2}$ are convex.
+
+		Obviously equality constraint function $h(x)=x_1-3x_2$ is a affine function.
+	\item
+		\Esolve
+		It is \textbf{NOT} a convex optimization problem.
+
+		The equality constraint function $h(x)=6x_1^2-7x_2$ is not a affine function.
+\end{enumerate}
+
+\end{document}
+

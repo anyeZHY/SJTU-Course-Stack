@@ -1,0 +1,248 @@
+%! Tex program = xelatex
+\documentclass{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{ntheorem}
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}%table package
+\usepackage{multirow,booktabs}
+\usepackage{makecell}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{color}
+\usepackage{physics}
+
+\def\RR{\mathbb{R}}
+\def\bw{\boldsymbol{\omega}}
+\def\bx{\boldsymbol{x}}
+\def\by{\boldsymbol{y}}
+\def\bd{\boldsymbol{d}}
+\def\bf{\boldsymbol{f}}
+\def\vvert{\vert\vert}
+\def\bA{\boldsymbol{A}}
+\def\bB{\boldsymbol{B}}
+\def\bC{\boldsymbol{C}}
+\def\bO{\boldsymbol{O}}
+\def\convex#1#2{\theta#1+\bar{\theta}#2}
+
+\def\Esolve{\textcolor{blue}{Solve: }}
+\def\Eproof{\textcolor{blue}{Proof: }}
+\def\Eprco{\textcolor{blue}{Proof by contradiction: }}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{proof}{Proof}
+\newtheorem*{theorem}{Theorem}
+
+
+\begin{document}
+\title{Homework 3}
+\author{Zhen}
+\maketitle
+
+\section*{Problem 1}
+Suppose f is a convex function and $S \subset$ dom $f$ is a convex set. Let M be the set of global minima of f over S,
+$$M=\qty{\bx^*\in S:f(\bx^*)\le f(\bx),\forall\bx\in S}$$
+Show that $M$ is a convex set.
+\\
+\Eproof
+
+Apparently, $M=\qty{\bx:f(\bx)=C}$ where $C$ is a const and $\forall \bx\in C,f(\bx)\ge C$.
+
+$\forall \bx,\by\in M$ and $\theta\in(0,1)$,we have
+$$C\le f(\convex{\bx}{\by})\le\convex{f(\bx)}{f(\by)}=C,$$
+which means that $f(\convex{\bx}{\by})=C$.
+
+Thus $\convex{\bx}{\by}\in M$ and $M$ is convex.
+
+\section*{Problem 2}
+Let $f$ be convex. If $f(\convex{\bx}{\by})=\convex{f(\bx)}{f(\by)}$ for some $\bx,\by$ and $\theta=\theta_0\in(0,1)$, then it holds for the same $\bx,\by$ and any $\theta\in[0,1]$.
+\\
+\Eprco
+
+Without loss of generality, assume that
+$f(\theta_1\bx+\bar{\theta_1}\by)<\theta_1f(\bx)+\bar{\theta_1}f(\by)$ where $\theta_1\in(\theta_0,1)$.
+
+Then we have
+
+$$
+\begin{aligned}
+	\frac{\theta_0}{\theta_1}
+	f\qty(\theta_1\bx+\bar{\theta_1}\by)
+	+
+	\qty(1-\frac{\theta_0}{\theta_1})
+	f(\by)
+	&<
+	\frac{\theta_0}{\theta_1}
+	\qty(\theta_1f(\bx)+\bar{\theta_1}f(\by))
+	+
+	\qty(1-\frac{\theta_0}{\theta_1})
+	f(\by)
+	\\
+	&=
+	\theta_0 f(\bx)+(1-\theta_0)f(\by)
+	\\
+	&=
+	f\qty(\theta_0\bx+\bar{\theta_0}\by)
+	\\
+	&=
+	f\qty(
+	\frac{\theta_0}{\theta_1}\qty(\theta_1\bx+\bar{\theta_1}\by)+\qty(1-\frac{\theta_0}{\theta_1})\by
+)
+\end{aligned}
+$$
+
+Let $\theta_2=\dfrac{\theta_0}{\theta_1}$, $\bx_1=\qty(\theta_1\bx+\bar{\theta_1}\by)$ and $\bx_2=\by$. Thus we get
+
+$$
+\theta_2f(\bx_1)+\bar{\theta_2}f(\bx_2)<f\qty(\theta_2\bx_1+\bar{\theta_2}\bx_2)
+$$
+which deduce a contradiction.
+
+Therefore, $\forall\theta\in(0,1):\convex{f(\bx)}{f(\by)}\le f(\convex{\bx}{\by})\le\convex{f(\bx)}{f(\by)}$.
+
+Then $f(\convex{\bx}{\by})=\convex{f(\bx)}{f(\by)}$, $\forall \theta\in(0,1)$.
+
+
+\newpage
+
+\section*{Problem 3}
+Determine if the following functions are convex, concave, or neither.
+
+\begin{enumerate}[(a)]
+	\item $f(\bx)=f(x_1,x_2,x_3)=x_1^2+x_1x_3+x_2^2+x_2x_3+\frac12x_3^2$ on $\RR^3$
+		
+		\Esolve Convex.
+
+		Assume $f(\bx)=\bx^T\bA\bx$. By the fact that
+		$$
+		f(\bx)=\qty(x_1+\frac12x_3)^2+\qty(x_2+\frac12x_3)^2
+		$$
+		we have $\nabla^2f=2\bA\succeq\bO$. Therefore $f$ is convex.
+
+	\item $f(\bx)=f(x_1,x_2)=(x_1x_2)^{-1}$ on $\RR_{++}^2=\qty{(x_1,x_2):x_1>0,x_2>0}$
+
+		\Esolve Convex.
+
+		Considering that:
+		$\displaystyle{
+			\pdv[2]{f}{x_1}=\dfrac{2}{x_1^3x_2},
+			\pdv[2]{f}{x_2}=\dfrac{2}{x_1x_2^3},
+			\pdv{f}{x_1}{x_2}=\dfrac{1}{x_1^2x_2^2}
+		}$\\
+
+		Then the eigenvalue $\lambda_1,\lambda_2$ of $\nabla^2f$ satisfies that: 
+		$$
+		(\lambda-\dfrac{2}{x_1^3x_2})(\lambda-\dfrac{2}{x_1x_2^3})-\dfrac{1}{x_1^4x_2^4}=0,\ i=1,2
+		$$
+
+		Let $f(\lambda)$ denote \textbf{LHS} of the above equation. Then $f(\lambda)=0$ is a parabola with an axis of symmetry $\lambda=\dfrac{1}{x_1^3x_2}+\dfrac{1}{x_1x_2^3}>0$.\\
+
+		And considering that $f(0)>0$ and $f(\lambda)=0$ is of 2 unique solutions, we have $\lambda_1,\lambda_2>0$. Thus $\nabla^2f\succeq\bO$ and $f$ is convex.
+	\item
+		$f(x_1,x_2)=x_1x_2^2$ on $\RR_{++}^2$
+
+		\Esolve Neither.
+		$$\nabla^2f=\mqty(0 & 2x_2 \\ 2x_2 & 2x_1)$$
+		Then the eigenvalue of $\nabla^2f$ $\lambda_{\pm}=x_1\pm\sqrt{x_1^2+4x_2^2}$. Thus $f$ is neither convex nor concave ($\lambda_+>0$ while $\lambda_-<0$).
+
+	\item $f(x_1,x_2)=x_1x_2^{-1/2}$ on $\RR_{++}^2$
+
+		\Esolve Neither.
+
+		Considering that:
+		$\displaystyle{\pdv[2]{f}{x_1}=0,\ \pdv{f}{x_1}{x_2}=-\dfrac{1}{2x_2^{3/2}},\ \pdv[2]{f}{x_2}=\dfrac{3x_1}{4x_2^{5/2}}}$. \\
+
+		Then the eigenvalue of $\nabla^2f$ 
+		$$
+		\lambda_{\pm}=\frac12\qty(\dfrac{3x_1}{4x_2^{5/2}}
+			\pm
+		\sqrt{\dfrac{9x_1^2}{16x_2^5}+\dfrac{1}{x_2^3}})
+		$$
+		Thus $f$ is neither convex nor concave ($\lambda_+>0$ while $\lambda_-<0$).
+
+
+
+	\item $f(x_1,x_2)=x_1^\alpha x_2^{1-\alpha}$ on $\RR_{++}^2$
+
+		\Esolve Concave.
+
+		Considering that 
+		$$
+		\nabla^2f
+		=
+		-\alpha(1-\alpha)x_1^{\alpha-2}x_2^{-1-\alpha}
+		\mqty[x_2^2 & x_1x_2 \\ x_1x_2 & x_2^2]
+		\triangleq
+		C(x_1,x_2,\alpha)\bA
+		$$
+		By the fact that 
+		$C(x_1,x_2,\alpha)<0\land \bA\succeq\bO$, 
+		$\nabla^2f\preceq\bO$ and $f$ is concave.
+\end{enumerate}
+
+\newpage
+
+\section*{Problem 4}
+
+Suppose $f_i:\RR\to\RR, i=1,2$, are strictly convex functions. Show that $f:\RR^2\to\RR$ defined by $f(x_1,x_2) = f_1(x_1)+f_2(x_2)$ is strictly convex over $\RR^2$, and in particular $f(x_1,x_2) = x_1^2 +x_2^4$ is strictly convex.
+
+\Eproof
+
+$\forall\bx=(x_1,x_2),\by=(y_1,y_2)\in\RR^2$ and $\forall\theta\in(0,1)$, 
+$$
+\begin{aligned}
+	f(\convex{\bx}{\by})
+	&=f(\convex{x_1}{y_1},\convex{x_2}{y_2})
+	\\
+	&=
+	f_1(\convex{x_1}{y_1})+f_2(\convex{x_2}{y_2})
+	\\
+	&\le
+	\convex{f_1(x_1)}{f_1(y_1)}+\convex{f_2(x_2)}{f_2(y_2)}
+	\\
+	&=
+	\convex{f(\bx)}{f(\by)}
+\end{aligned}
+$$
+Therefore $f$ is strictly convex.
+
+Trivially, $f_1(x_1)=x_1^2$ and $f_2(x_2)=x_2^4$ are strictly conevx. Then $f(x_1,x_2)=f_1(x_1)+f_2(x_2)$ is strictly convex.
+
+\section*{Problem 5}
+Let $f:C\subset\RR^n\to\RR$ be a differentiable function defined on a nonempty open convex set $C$. Show that $f$ is convex if and only if
+$$
+\langle\nabla f(\bx)-\nabla f(\by),\bx-\by\rangle\ge0, \forall \bx,\by\in C
+$$
+
+\Eproof
+$$
+\begin{aligned}
+	&f \mbox{ is convex} 
+	\\ \iff
+	&
+	\forall\mbox{direction } \bd,\forall \bx\in C, g(t)=f(\bx+t\bd) \mbox{ is convex on } \qty{t:\bx+t\bd\in C}
+	\\ \iff
+	&
+	\forall\mbox{direction } \bd,\forall \bx\in C, g'(t)=\nabla f(\bx+t\bd)^T\bd \mbox{ is increasing on } \qty{t:\bx+t\bd\in C}
+	\\ \iff
+	&
+	\forall\mbox{direction } \bd,\forall \bx\in C,\forall h,s\in\qty{t:\bx+t\bd\in C}, \qty[g'(h)-g'(s)](h-s)\ge0
+	\\ \iff
+	&
+	\forall\mbox{direction } \bd,\forall \bx\in C,\forall h,s\in\qty{t:\bx+t\bd\in C}, \qty[\nabla f(\bx+h\bd)^T\bd-f(\bx+s\bd)^T\bd](h-s)\ge0
+	\\ \iff
+	&
+	\forall\mbox{direction } \bd,\forall \bx\in C,\forall h,s\in\qty{t:\bx+t\bd\in C}, \qty[\nabla f(\bx+h\bd)^T-f(\bx+s\bd)^T]\qty[(\bx+h\bd)-(\bx+s\bd)]\ge0
+	\\ \iff
+	&
+	\forall \bx,\by\in C,\qty[\nabla f(\bx)^T-\nabla f(\by)^T]\qty(\bx-\by)\ge0 \mbox{ (Note that: }\exists s,\bd,\ \bx=\bx+0\bd, \by=\bx+t\bd\mbox{)}
+	\\ \iff
+	&
+	\forall \bx,\by\in C,\langle\nabla f(\bx)-\nabla f(\by),\bx-\by\rangle\ge0
+\end{aligned}
+$$
+\end{document}
+
+
+
+

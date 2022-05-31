@@ -1,0 +1,246 @@
+%! Tex program = xelatex
+\documentclass{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{ntheorem}
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}%table package
+\usepackage{multirow,booktabs}
+\usepackage{makecell}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{enumerate}
+
+\def\RR{\mathbb{R}}
+\def\bw{\boldsymbol{\omega}}
+\def\bx{\boldsymbol{x}}
+\def\bd{\boldsymbol{d}}
+\def\vvert{\vert\vert}
+\def\dd{\mathrm{d}}
+\def\bA{\boldsymbol{A}}
+\def\bB{\boldsymbol{B}}
+\def\bC{\boldsymbol{C}}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{proof}{Proof}
+\newtheorem*{theorem}{Theorem}
+
+\begin{document}
+\title{Homework 1}
+\author{Zhen Haoyu}
+\maketitle
+
+\section*{Problem 1}
+
+$f(x)=2x_1^2 +x_1x_2+x_2^2-3x_1-5x_2$
+
+\begin{enumerate}[(a)]
+	\item Because
+		$$
+		2x_1^2 +x_1x_2 + x_2^2-3x_1-5x_2
+		\ge
+		\frac{3}{2}x_1^2 + \frac{1}{2}x_2^2-3x_1-5x_2
+		$$
+		And if $$|x_1|, |x_2|>100,$$
+		then $$f(x)\ge
+		\frac{1}{2}x_1^2 + \frac{1}{4}x_2^2.$$
+
+		Thus we get: when $\vert\vert x\vert\vert\rightarrow+\infty$, $f(x)\rightarrow+\infty$, which means that $f(x)$ is coercive.
+	\item The maximun of $f(x)$ does \textbf{not} exist.
+		
+		The local minimun $(x_1,x_2)$ should satisfy:
+
+		$$\frac{\partial f}{\partial x_1}=4x_1+x_2-6=0$$
+		and 
+		$$\frac{\partial f}{\partial x_2}=x_1+2x_2-5=0.$$
+		Then we get $(x_1,x_2)=(\dfrac{1}{7},\dfrac{17}{7})$ and $\nabla^2 f$ is positive definite. 
+
+		Thus the minimum is $-\dfrac{44}{7}$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+
+$$ f(\bw)=\sum_{i=1}^m \log(1+e^{-y_i\bx_i^T\bw}) $$
+
+\begin{enumerate}[(a)]
+	\item
+		By $\log(1+e^x)>0$, we have:
+		$$\forall \bw,\ f(\bw)>0.$$
+
+		And $$
+		\lim_{k\to+\infty}f(k\bw_0)=
+		\lim_{k\to+\infty}\sum_{i=1}^m \log(1+e^{-ky_i\bx_i^T\bw_0})=0
+		$$
+
+		Thus $f$ does not have a global minimum.
+	\item
+		\textbf{Proof by step:}
+		\begin{enumerate}[(i)]
+			\item 
+			\begin{equation*}
+			\begin{aligned}
+				f(\bw)\ & =\ \  
+				\sum_{i=1}^m \log(1+e^{-y_i\bx_i^T\bw})
+				\\
+				& \ge
+				\sum_{y_i\bx_i^T\bw<0}
+				\log(1+e^{-y_i\bx_i^T\bw})
+				\\
+				& \ge
+				\sum_{y_i\bx_i^T\bw<0}
+				-y_i\bx_i^T\bw
+				\\
+				& \ge
+				\max_{y_i\bx_i^T\bw<0}-y_i\bx_i^T\bw
+				\\
+				& =
+				\max_{1 \le i \le m} -y_i\bx_i^T\bw
+			\end{aligned}
+			\end{equation*}
+			
+		\item
+			Set $S$ is bounded and closed while the function $h(\bw)$ is continuos.
+
+			By Extreme Value Theorem, $h(\bw)$ has a global minimum.
+
+		\item
+			$\forall \bw\in S$:
+			$$
+			\frac{h(\bw)}{\vvert\bw\vvert}
+			\ge
+			\max_{1\le i\le m} -y_i\bx_i^T\frac{\bw}{\vvert\bw\vvert}
+			\ge C
+			$$
+
+		Thus
+		$$h(\bw)\ge C\vvert\bw\vvert$$
+		\item
+			By (i), (ii) and (iii), we have:
+			$$
+			\exists C\in\RR,\ f(\bw)\ge C\vvert\bw\vvert
+			$$
+			So when $\vvert\bw\vvert+\infty$, $f(\bw)\to+\infty$. Then function $f$ is coercive and continuous.
+
+			Thus, $f$ has a global minimum.
+		\end{enumerate}
+
+	\item 
+		$$\nabla f=\sum_{i=1}^m 
+		\frac{-y_i\bx_i e^{-y_i\bx_i^T\bw}}
+		{1+e^{-y_i\bx_i^T\bw}}
+		$$
+
+
+\end{enumerate}
+
+\newpage
+\section*{Problem 3}
+
+\begin{enumerate}[(a)]
+	\item Given $\bx$, let 
+		$$R(\bd)=f(\bx+\bd)-f(\bx)-\nabla f(\bx)^T\bd$$
+
+		Then
+		$$
+		\nabla R(\bd) = 
+		\nabla f(\bx+\bd)-\nabla f(\bx)
+		$$
+		
+		By Lagrange mean value theorem, $\exists \boldsymbol{\xi}\in(\bx,\ \bx+\bd)$:
+		$$
+		\nabla f(\bx+\bd)-\nabla f(\bx) = 
+		\nabla^2 f(\boldsymbol{\xi})\bd
+		$$
+
+		\begin{lemma}
+			If $\nabla f(\bx)=\bA\bx$ and $\bA$ is symmetric, then $f(x)=\frac{1}{2}\bx^TA\bx+C$, where $\bA=(a_{ij})_{n\times n}$, $\bx=(x_1,x_2,\dots,x_n)^T$ and $C$ is a const.
+		\end{lemma}
+
+		\begin{proof}
+			$$
+			f(x) = 
+			\int\sum_{i=1}^n
+			\frac{\partial f}{\partial x_i}\dd x_i = 
+			\int\sum_{i=1}^n\sum_{j=1}^n
+			a_{ij}x_j\dd x_i =
+			\sum_{i\neq j}a_{ij}x_i x_j + 
+			\sum_{i=1}^n \frac{1}{2}a_{ii}x_i^2+C
+			=
+			\frac{1}{2}\bx^TA\bx+C
+			$$
+		\end{proof}
+
+		Because $\nabla^2f(\boldsymbol{\xi})$ is symmetric, we have:
+		$$
+		\begin{aligned}
+		R(\bd)
+		&=
+		\frac{1}{2}\bd^T\nabla^2 f(\boldsymbol{\xi})\bd+C
+		\\[4pt]
+		&=
+		\frac{1}{2}\bd^T\nabla^2 f(\bx+t\bd)\bd+C,
+		\end{aligned}
+		$$
+		where $t=\dfrac{\boldsymbol{\xi}-\bx}{d}\in (0,\ 1)$.
+
+		By $R(\boldsymbol{0})=0$, we have: $C=0$ and finnaly get:
+		$$R(\bd)=\frac{1}{2}\bd^T\nabla^2 f(\bx+t\bd)\bd$$
+
+
+	\item \textbf{Proof:}
+		By the Newton-Leibniz formula, $\forall i\in{1,2,\dots,n}$:
+		$$
+		\int_0^1 \big[\nabla f_i(\bx+t\bd)\big]\bd\ \dd t
+		=
+		\int_0^1
+		\sum_{j=1}^n f_{ij}(\bx+t\bd)\dd(td_j)
+		=
+		f_i(\bx+\bd) - 
+		f_i(\bx)
+		$$
+		where $f_i=\dfrac{\partial f}{\partial x_i}$, 
+		$f_{ij}=\dfrac{\partial^2 f}{\partial x_i\partial x_j}$ and 
+		$\bd=(d_1,d_2,\dots,d_n)^T$.
+
+		Also, we have
+		$$
+		\int_0^1\nabla^2 f(\bx+t\bd)\bd\ \dd t=
+		\begin{pmatrix}
+			\displaystyle{
+			\int_0^1 \big[(\nabla f_1)(\bx+t\bd)\big]\bd\ \dd t
+		} \\[10pt]
+
+
+			\displaystyle{
+			\int_0^1 \big[(\nabla f_2)(\bx+t\bd)\big]\bd\ \dd t
+		} \\[3pt]
+
+			\vdots \\[3pt]
+			\displaystyle{
+			\int_0^1 \big[(\nabla f_n)(\bx+t\bd)\big]\bd\ \dd t}
+		\end{pmatrix}.
+		$$
+		
+
+		Therefore,
+
+		$$
+		\int_0^1\nabla^2 f(\bx+t\bd)\bd\ \dd t
+		=
+		\nabla f(\bx+\bd) - 
+		\nabla f(\bx)
+		$$
+\end{enumerate}
+
+\section*{Problem 4}
+\textbf{Solve:}\\
+
+$D_1(\bA)=6$, $D_2(\bA)=26$ and $D_3(\bA)=30$. So $\bA$ is positive definite.\\
+
+$D_1(\bB)=1$, $D_2(\bB)=-2$ and $D_3(\bB)=5$. So $\bB$ is indefinite.\\
+
+$\bC$'s eigenvalues are $3,\ 3,\ 0$. So $\bC$ is positive semidefinite.\\
+
+\end{document}
+
