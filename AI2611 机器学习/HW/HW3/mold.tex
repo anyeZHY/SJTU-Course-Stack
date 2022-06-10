@@ -1,0 +1,111 @@
+% ! Tex program = xelatex
+\documentclass{article}
+\PassOptionsToPackage{quiet}{fontspec}% (or try silent)
+% 中文
+\usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../preamble}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+% \tableofcontents
+\title{\vspace{-1.5cm}Homework 3}
+\maketitle
+
+\section{Some Lemmas in Linear Algebra}
+\begin{lemma}
+	\[
+		x^TA x=\tr(A xx^T)
+	.\] 
+\end{lemma}
+\begin{lemma}
+	\[
+		\pdv{\log\abs{A}}{A}=2A^{-1}-\-{diag}(A^{-1})
+		\qand
+		\pdv{\tr(AB)}{A}=(B+B^T)-\-{diag}(B)
+	.\] 
+\end{lemma}
+\section{Update $\Sigma_k$ in EM}
+Now we want to find a good enough $\Sigma_k$. Our goal is to maximize the liklihood 
+\[
+	\+L=\sum^{N}_{n=1} \ln(\sum^{K}_{k=1} \pi_k\+N(x_n|\mu_k,\Sigma_k))
+\] where 
+\[
+	\+N(x_n|\mu_k,\Sigma_k)
+	=
+	\frac{1}{\qty(2\pi)^{\flatfrac{D}{2}}\abs{\Sigma_k}^{\flatfrac{1}{2}}}
+	\exp(-\frac{1}{2}(x_n-\mu_k)^T\Sigma_k^{-1}(x_n-\mu_k))
+.\] 
+Thus
+\[
+    \begin{aligned}
+		\pdv{L}{A}
+		&=
+		\sum^{N}_{n=1} \qty{
+			\frac{1}{\sum^{K}_{j=1} \pi_j\+N(x_n|\mu_j,\Sigma_j)}\times
+			\pdv{A}\pi_k\+N(x_n|\mu_k,\Sigma_k)
+		}
+	    \\&=
+		\sum^{N}_{n=1} \qty{
+			\frac{\pi_k\+N(x_n|\mu_k,\Sigma_k)}{\sum^{K}_{j=1} \pi_j\+N(x_n|\mu_j,\Sigma_j)}\times
+			\pdv{A}\qty[-\frac{1}{2}\log\abs{\Sigma_k}-\frac{1}{2}(x_n-\mu_k)^T\Sigma_k^{-1}(x_n-\mu_k)]
+		}
+		\\&=
+		\sum^{N}_{n=1} \qty{
+			\frac{\pi_k\+N(x_n|\mu_k,\Sigma_k)}{\sum^{K}_{j=1} \pi_j\+N(x_n|\mu_j,\Sigma_j)}\times
+			\pdv{A}
+			\qty[\frac{1}{2}\log\abs{\Sigma_k^{-1}}-\frac{1}{2}\tr(\Sigma_k^{-1}N_{n,k})]
+		}
+    \end{aligned}
+.\] 
+where $N_{n,k}=(x_n-\mu_k)(x_n-\mu_k)^T$. $\pdv*{L}{\Sigma_k^{-1}}=0$ gives
+\[
+    \sum^{N}_{n=1} \qty{
+			\frac{\pi_k\+N(x_n|\mu_k,\Sigma_k)}{\sum^{K}_{j=1} \pi_j\+N(x_n|\mu_j,\Sigma_j)}\times
+			\frac{1}{2}\Big[2(\Sigma_k-N_{n,k})-\-{diag}(\Sigma_k-N_{n,k})\Big]
+		}=0
+\] 
+which entails that
+\[
+	\sum^{N}_{n=1} \qty[
+		\frac{\pi_k\+N(x_n|\mu_k,\Sigma_k)}{\sum^{K}_{j=1} \pi_j\+N(x_n|\mu_j,\Sigma_j)}\times
+		(\Sigma_k-N_{n,k})
+	]=0
+\] 
+which entails
+\[
+    \Sigma_k=
+	\qty(\sum^{N}_{n=1}
+		\frac{\pi_k\+N(x_n|\mu_k,\Sigma_k)}{\sum^{K}_{j=1} \pi_j\+N(x_n|\mu_j,\Sigma_j)})^{-1}
+	\sum^{N}_{n=1} \qty[
+		\frac{\pi_k\+N(x_n|\mu_k,\Sigma_k)}{\sum^{K}_{j=1} \pi_j\+N(x_n|\mu_j,\Sigma_j)}\times
+		(x_n-\mu_k)(x_n-\mu_k)^T
+	]
+.\] 
+For simplicity, 
+\[
+	\gamma(z_nk)
+	\defeq
+	\sum^{N}_{n=1}\frac{\pi_k\+N(x_n|\mu_k,\Sigma_k)}{\sum^{K}_{j=1} \pi_j\+N(x_n|\mu_j,\Sigma_j)}
+\]
+Finally
+\[
+    \Sigma_k=
+	\frac{1}{\sum^{N}_{n=1}\gamma(z_nk)}
+	\sum^{N}_{n=1} \Big[
+		\gamma(z_nk)(x_n-\mu_k)(x_n-\mu_k)^T
+	\Big]
+.\] 
+Nota Bena: if we update $\mu$ first, then we could let $\mu_k$ above be  $\mu^{\-{new}}_k$.
+
+\end{document}
+

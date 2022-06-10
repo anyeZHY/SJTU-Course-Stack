@@ -1,0 +1,62 @@
+% ! Tex program = xelatex
+\documentclass{article}
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../preamble}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+% \tableofcontents
+\title{Homework 1}
+\maketitle
+
+\begin{prp}
+	If $Z=UDV^T$, then
+	\[
+		\begin{aligned}
+			Z^TZ
+			=
+			(UDV^T)^T(UDV^T)
+			=
+			VD^TU^TUDV^T
+			=
+			VD^2V^T
+		\end{aligned}
+	.\] 
+\end{prp}
+\begin{prp}
+	If $A=VDV^T$, then \[A^{-1}=VD^*V^T\] where $D=\mathrm{diag}(d_1,d_2,\cdots,d_n)$, $D^*=\mathrm{diag}(d_1^{-1},d_2^{-1},\cdots,d_n^{-1})$ and $V$ is orthogonal.
+\end{prp}
+\begin{proof}
+	\[VD^*V^TVDV^T=VD^*DV^T=VV^T=I.\]
+\end{proof}
+
+Thus
+\[
+	\begin{aligned}
+		(Z^TZ+\lambda I)^{-1}Z^Ty
+		&=
+		(VD^2V^T+V\lambda IV^T)^{-1}VDU^Ty
+		\\[6pt]&=
+		\qty[V\qty(D^2+\lambda I)V^T]^{-1}VDU^Ty
+		\\[6pt]&=
+		V\qty[\mathrm{diag}_i\qty(\frac{1}{d_i^2+\lambda})]V^TVDU^Ty
+		\\[6pt]&=
+		V\qty[\mathrm{diag}_i\qty(\frac{1}{d_i^2+\lambda})]DU^Ty
+		\\[6pt]&=
+		V\qty[\mathrm{diag}_i\qty(\frac{d_i}{d_i^2+\lambda})]U^Ty
+	\end{aligned}
+.\]
+
+\end{document}
+

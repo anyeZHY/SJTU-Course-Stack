@@ -1,0 +1,56 @@
+% ! Tex program = xelatex
+\documentclass{article}
+% \PassOptionsToPackage{quiet}{fontspec}% (or try silent)
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../preamble}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+% \tableofcontents
+\title{Homework 2}
+\maketitle
+Firtly we update the $m_i$:
+\[
+	m_i^*=\frac{n_im_i-\hat{x}}{n_i-1}=m_i-\frac{\hat{x}-m_i}{n_i-1}
+.\] 
+Then by defination, $J_i^*$ reads:
+\[
+	\begin{aligned}
+		J^*_i
+		&=
+		\sum_{x\in H_i} \norm{x-m_i^*}^2 - \norm{\hat{x}-m_i^*}^2
+		\\&=
+		\sum_{x\in H_i} \norm{x-m_i-\frac{\hat{x}-m_i}{n_i-1}}^2
+		- 
+		\norm{\hat{x}-m_i-\frac{\hat{x}-m_i}{n_i-1}}^2
+		\\&=
+		\sum_{x\in H_i} \norm{x-m_i}^2
+		+
+		\frac{2}{n_i-1}\sum_{x\in H_i}(x-m_i)^T(\hat{x}-m_i)
+		+
+		\frac{n_i}{(n_i-1)^2}\norm{\hat{x}-m_i}^2
+		-
+		\frac{n_i^2}{(n_i-1)^2}\norm{\hat{x}-m_i}^2
+		\\&=
+		J_i
+		-
+		\frac{n_i^2-n_i}{(n_i-1)^2}\norm{\hat{x}-m_i}^2
+		\\[5pt]&=
+		J_i
+		-
+		\frac{n_i}{n_i-1}\norm{\hat{x}-m_i}^2
+	\end{aligned}
+.\] 
+\end{document}
+

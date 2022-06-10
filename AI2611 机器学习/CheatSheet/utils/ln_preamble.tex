@@ -1,0 +1,82 @@
+% theorems
+\usepackage{thmtools}
+\usepackage{thm-restate}
+\usepackage[framemethod=TikZ]{mdframed}
+\mdfsetup{skipabove=1em,skipbelow=0em, innertopmargin=12pt, innerbottommargin=8pt}
+
+\theoremstyle{definition}
+
+\declaretheoremstyle[headfont=\bfseries\sffamily, bodyfont=\normalfont,
+	mdframed={
+		nobreak,
+		backgroundcolor=brown!14,
+		topline=false,
+		rightline=false,
+		leftline=true,
+		bottomline=false,
+		linewidth=2pt,
+		linecolor=brown!180,
+	}
+]{thmbrownbox}
+
+\declaretheoremstyle[headfont=\bfseries\sffamily, bodyfont=\normalfont,
+	mdframed={
+		nobreak,
+		backgroundcolor=Blue!4,
+		topline=false,
+		rightline=false,
+		leftline=true,
+		bottomline=false,
+		linewidth=2pt,
+		linecolor=NavyBlue!120,
+	}
+]{thmbluebox}
+
+\declaretheoremstyle[headfont=\bfseries\sffamily, bodyfont=\normalfont,
+	mdframed={
+		nobreak,
+		backgroundcolor=Green!5,
+		topline=false,
+		rightline=false,
+		leftline=true,
+		bottomline=false,
+		linewidth=2pt,
+		linecolor=OliveGreen!120,
+	}
+]{thmgreenbox}
+
+\declaretheoremstyle[headfont=\bfseries\sffamily, bodyfont=\normalfont,
+	mdframed={
+		nobreak,
+		topline=false,
+		rightline=false,
+		leftline=true,
+		bottomline=false,
+		linewidth=2pt,
+		linecolor=OliveGreen!120,
+	}
+]{thmgreenline}
+
+\declaretheoremstyle[headfont=\bfseries\sffamily, bodyfont=\normalfont,
+	mdframed={
+		nobreak,
+		topline=false,
+		rightline=false,
+		leftline=true,
+		bottomline=false,
+		linewidth=2pt,
+		linecolor=NavyBlue!70,
+	}
+]{thmblueline}
+
+\declaretheorem[numberwithin=section, style=thmbrownbox, name={\color{Brown}Definition}]{defi}
+\declaretheorem[numberwithin=section, style=thmgreenbox, name={\color{OliveGreen}Law}]{law}
+\declaretheorem[numberwithin=section, style=thmbluebox, name={\color{Blue}Corollary}]{cor}
+\declaretheorem[numberwithin=section, style=thmgreenline, name={\color{OliveGreen}Property}]{prt}
+\declaretheorem[numberwithin=section, style=thmbluebox, name={\color{Blue}Proposition}]{prp}
+\declaretheorem[numberwithin=section, style=thmbluebox, name={\color{Blue}Theorem}]{thm}
+\declaretheorem[numberwithin=section, style=thmbluebox, name={\color{Blue}Lemma}]{lemma}
+\declaretheorem[numberwithin=section, style=thmbrownbox,  name={\color{Brown}Example}]{eg}
+\declaretheorem[numberwithin=section, style=thmgreenline, name={\color{OliveGreen}Remark}]{remark}
+\declaretheorem[numbered=no,style=thmblueline, name={\color{NavyBlue!70}Proof},qed=$\square$]{prf}
+\numberwithin{equation}{section}
