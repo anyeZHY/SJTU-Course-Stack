@@ -17,7 +17,6 @@
 % \setlength\cellspacebottomlimit{6pt}
 \usepackage{makecell}
 \usepackage{enumitem}
-\setlist{nosep,leftmargin=10pt}
 
 % \setcellgapes{3pt}
 
@@ -26,29 +25,33 @@
 \setlength{\belowdisplayskip}{0.5pt}
 
 \newcommand{\ds}{\displaystyle}
-\title{AI2611 CheatSheet}
+\title{\vspace{0.4cm} AI2611 CheatSheet}
 \maketitle
 \section*{\centering Preface}
-\begin{minipage}[t]{0.5\linewidth}
-	\subsection*{\centering \vspace{0.5cm} Introduction}
-\begin{itemize}
-	\item
-	      My Machine Learning Lecture Notes (更丰富、更全面的版本，适合学习这门课):
-	\item
-	      \LaTeX\, code of the CheatSheet is available at:
-	\item
-	      CheatSheet为2022版（非常少也很草率，当然有部分超纲，不适合用于学习）。
-\end{itemize}
+\begin{minipage}[t]{0.49\linewidth}
+	\subsection*{\centering \vspace{0.3cm} Introduction}
+	\setlist{nosep,leftmargin=20pt}
+	\begin{itemize}
+		\item
+		      My Machine Learning Lecture Notes (更丰富的版本，适合学习这门课):\\
+		      \href{https://github.com/anyeZHY/Self-Learning/blob/main/CS229/MyNotes/ML.pdf}{Self-Learning/CS229/MyNotes/ML.pdf}
+		\item
+		      \LaTeX\, code of the CheatSheet is available at:\\
+		      \href{https://github.com/anyeZHY/SJTU-Course-Stack}{SJTU-Course-Stack/AI2611/CheatSheet}
+		\item
+		      CheatSheet为2022版（非常少较草率，当然有部分超纲，不适合用于学习）。
+	\end{itemize}
 \end{minipage}
-\begin{minipage}[t]{0.5\linewidth}
-\subsection*{\centering \vspace{0.5cm} Ackonwledgement}
-\begin{itemize}
-	\item CS229, Stanford University. (Foundation, Kernel Method, GMM)
-	\item CS231n, Stanford University. (Deep Learning)
-	\item CS189, UC Berkeley. (Random Forest)
-	\item Understanding Machine Learning, Cambridge University. (Linear Regression, KNN, SVM, K-means, PCA)
-	\item AI2611, Shanghai Jiao Tong University. (中文部分, Spectral, Dimensionality Reduction)
-\end{itemize}
+\begin{minipage}[t]{0.49\linewidth}
+	\subsection*{\centering \vspace{0.3cm} Ackonwledgement}
+	\setlist{nosep,leftmargin=20pt}
+	\begin{itemize}
+		\item CS229, Stanford University. (Foundation, Kernel Method, GMM)
+		\item CS231n, Stanford University. (Deep Learning)
+		\item CS189, UC Berkeley. (Random Forest)
+		\item Understanding Machine Learning, Cambridge University. (Linear Regression, KNN, SVM, K-means, PCA)
+		\item AI2611, Shanghai Jiao Tong University. (中文部分, Spectral, Dimensionality Reduction)
+	\end{itemize}
 \end{minipage}
 
 \clearpage
@@ -56,13 +59,14 @@
 \begin{tiny}
 	\renewcommand{\section}[1]{{$\S$ \scriptsize\bfseries #1}}
 	\renewcommand{\subsection}[1]{{\scriptsize\bfseries #1}}
+	\setlist{nosep,leftmargin=10pt}
 	\begin{multicols}{4}
 		\section{Foundation}
 
-		\begin{minipage}[]{0.5\linewidth}
-			监督学习、无监督学习（聚类、降维）\\独立同分布\\最小化范化误差
+		\begin{minipage}[]{0.58\linewidth}
+			监督学习、无监督学习（聚类、降维）\\独立同分布；最小化范化误差
 		\end{minipage}
-		\begin{minipage}[p]{0.48\linewidth}
+		\begin{minipage}[p]{0.38\linewidth}
 			\includegraphics[width=\linewidth]{sensitivity.pdf}
 		\end{minipage}
 
@@ -115,8 +119,8 @@
 		\]
 		\section{Linear Regression}
 
-		Loss function: $\+L_\+S(h)=\frac{1}{m}\sum_{i=1}^m(h(\*x)-\*y)^2\mbox{, }\forall h\in\+H_{reg}$.
-		We need to solve $A\*w=\*b$ where $A\deq\sum\*x_i\*x_i^T=XX^T$ and $\*b\deq\sum y_i\*x_i=X^T\*y$.
+		Loss function: $\+L_\+S(h)=\frac{1}{m}\sum_{i=1}^m(h(\*x)-\*y)^2$.
+		Solve $A\*w=\*b$ where $A\deq\sum\*x_i\*x_i^T=XX^T$ and $\*b\deq\sum y_i\*x_i=X^T\*y$.
 
 		\begin{thm}
 			$\omega=(X^TX)^{-1}X^T\*y$. 优点：single-shot算法，易于实现；缺点：伪逆计算量大没可能导致数值不稳定（奇异矩阵）。
@@ -124,13 +128,15 @@
 
 		\begin{thm}
 			\label{non-inv}
-			Using $A$'s eigenvalue decomposition,we could write $A$ as $VD^+V^T$ where $D$ is a diagnonal matrix and  $V$ is an orthonormal matrix. Define $D^+$ to be the diagonal matrix such that $D^+_{i,i}=0$ if  $D_{i,i}=0$ otherwise  $D^+_{i,i}=\flatfrac{1}{D_{i,i}}$. Then, $A\*{\hat{w}}=\*b$ where $\*{\hat{w}}=VD^+V^T\*b$.
+			Eigenvalue decomposition:
+			$A=VD^+V^T$ where $D$ is a diagnonal matrix and  $V$ is an orthonormal matrix.
+			Define $D^+$ to be the diagonal matrix: $D^+_{i,i}=0$ if  $D_{i,i}=0$ otherwise  $D^+_{i,i}=\flatfrac{1}{D_{i,i}}$.
+			Then, $A\*{\hat{w}}=\*b$ where $\*{\hat{w}}=VD^+V^T\*b$.
 		\end{thm}
 
 		\begin{remark}
-			Use the \textbf{Gradient Descent} method. 优点：收敛快，易于实现；缺点：批量更新，可伸缩性问题。
+			\textbf{Gradient Descent}. 优点：收敛快，易于实现；缺点：批量更新，可伸缩性问题。
 		\end{remark}
-		$\+H^n_{poly}=\set{x\mapsto p(x)}$ where $\psi(x)=(1,x,x^2,\cdots,x^n)$ and $p(\psi(x))=a_0+a_1x+a_2x^2+\cdots+a_nx^n$.
 		概率解释：$y|x;\theta\sim\+N(0,\sigma)$. Loss function 为最大似然的结果，分类器为$E[y|x]$。
 
 		\subsection{Ridge (岭) Regression}
@@ -174,10 +180,7 @@
 			\defeq
 			H(Y)-H(Y|X_j)
 		\]
-		Gini impurity/index
-		\[
-			G(Y)=\sum_k \Pr(Y=k)\sum_{j\ne k}\Pr(Y=j)=1-\sum_k\Pr^2(Y=k)
-		\]
+		Gini impurity/index: $G(Y)=1-\sum_k\Pr^2(Y=k)$
 
 		\subsection{Random Forest}
 		\\
@@ -229,16 +232,13 @@
 		% 		\end{thm}
 
 		\section{SVM}
-
 		\[
 			\argmax_{(w,b):\norm{w}=1}\min_{i\in[m]}\abs{w^Tx^i+b}
 			\ \ \
 			\text{s.t. }\forall i, y^i\qty(w^Tx^i+b)\ge 1
 			.\]
-		Equivalently,
 		\begin{equation}
 			\argmax_{(w,b):\norm{w}=1}\min_{i\in[m]}y^i\qty(w^Tx^i+b)
-			\label{naive_svm}
 		\end{equation}
 		\begin{md}
 			\[
@@ -309,13 +309,14 @@
 
 		\subsection{Linkage-Based Clustering Algorithms} aka \textbf{Agglomerative} Clustering which is trivial. Stopping criteria: numbers of clusters 或 current distance.
 
-		\section{GMM} $x|z\sim\+N(\nu,\Sigma)$ where  $z\sim \mathrm{Mul}(\phi)$ is the latent variable
+		\section{GMM}
+		$x|z\sim\+N(\nu,\Sigma)$ where  $z\sim \mathrm{Mul}(\phi)$ is the latent variable
 		\begin{itemize}
 			\item
-			      E-step: Evaluate the \textbf{posterior} probability:
+			      E-step: Evaluate the \textbf{posterior} Pr:
 			      $Q_i(z^i)=P(z^i|x^i;\theta)$.
 			\item
-			      M-step: Use the posterior probabilities $Qi(z^i)$ as cluster specific weights on data points $x^i$ to separately re-estimate each cluster model:
+			      M-step: Use the posterior Pr $Qi(z^i)$ as cluster specific weights on data points $x^i$ to separately re-estimate each cluster model:
 			      \[
 				      \theta_i
 				      =
@@ -360,19 +361,19 @@
 			$\LHS=\sum_{i\in A}d_i-\sum_{i,j\in A}W_{ij}$.
 		\end{thm}
 		\begin{thm}Relaxation: $x\in \{0,1\}^\abs{V}\rightarrow\RR^\abs{V}$.
-			
+
 			$\min \mathrm{cut}(A,\bar{A}) \iff \min x^TLx=(x^TLx)/(x^Tx) \iff$ $x$为L的最小非零特征值所对应的特征向量 (\href{https://en.wikipedia.org/wiki/Rayleigh_quotient}{Rayleigh quotient Theorem})。
 		\end{thm}
 		\begin{defi}\textbf{Normalized} Spectral Clustering:
 			\begin{itemize}
-				\item 
-					对拉普拉斯矩阵进行标准化操作：$L\gets D^{-0.5}LD^{-0.5}$ 
-				\item 
-					计算标准化操作后拉普拉斯矩阵最小的$k_1$个特征值对应的特征向量$F$
 				\item
-					将$F$组成的矩阵按行标准化，组成$n\times k_1$的特征矩阵$P$。
-				\item 
-					对$P$中的每一行作为一个$k_1$维的样本，用聚类方法进行聚类。
+				      对拉普拉斯矩阵进行标准化操作：$L\gets D^{-0.5}LD^{-0.5}$
+				\item
+				      计算标准化操作后拉普拉斯矩阵最小的$k_1$个特征值对应的特征向量$F$
+				\item
+				      将$F$组成的矩阵按行标准化，组成$n\times k_1$的特征矩阵$P$。
+				\item
+				      对$P$中的每一行作为一个$k_1$维的样本，用聚类方法进行聚类。
 			\end{itemize}
 		\end{defi}
 
@@ -420,7 +421,7 @@
 
 		\subsection{PCA}
 		拟合了训练数据的长轴短轴，使得映射后得到的低维度向量分布散射最大
-		
+
 		\subsection{MDS}
 		找到映射方向使得在低维空间中高维度样本间距离不变
 		\[
@@ -439,10 +440,72 @@
 
 		\subsection{ISOMAP VS LLE}
 		都保留了邻接的几何结构；都没有显式的映射函数，故使用比较麻烦；LLE需要更多的训练数据；ISOMAP计算效率高，实用性更高
-		
-		
+
+
 
 		\section{Deep Learning}
+		Trivial.
+		\begin{md}
+
+			\subsection{CNN}
+			\[
+				N=\frac{W-F+2P}{S}+1
+				.\]
+
+			\subsection{RNN}
+			\[
+				h_{t+1}=\-{Tanh}(W_hh_t+W_xx_{t+1})
+				.\]
+
+			\subsection{Attention}
+			\[
+				y=\-{SoftMax}\qty(\frac{QK^T}{\sqrt{D}})V
+				.\]
+
+			\subsection{Weight Initialization}
+			\[w\gets \sqrt{\flatfrac{2}{n}}\times\-{Rand}\+N(0,1)\]
+
+			\subsection{Activate Function}
+			\[
+				\-{Sigmoid}(z)=\frac{1}{1+\exp(-z)}
+				\qand
+				\-{Tanh}(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
+			\]
+
+			\subsection{Batch Normalization} (BP for BN is challenging)
+
+			Update:
+			\[
+				\mu = \alpha\mu + (1-\alpha)\hat{\mu}
+				\qand
+				\sigma^2 = \alpha\sigma^2 + (1-\alpha)\hat{\sigma}^2
+				.\]
+
+			Forward and Eval:
+			\[
+				x_i\gets \gamma \frac{x_i-\mu}{\sqrt{\sigma^2+\varepsilon}}+\beta
+			\]
+
+			\subsection{Momentum}
+			\[
+				v\gets\mu v-\alpha\dd x \qand x\gets x+v
+			\]
+
+			\subsection{Adam}
+			\[
+				\begin{aligned}
+					m\gets\beta_1 m+(1-\beta_1)\dd x
+					           & \qand
+					m_t \gets \flatfrac{m}{(1-beta_1^t)}
+					\\
+					v\gets\beta_2 v+(1-\beta_2)\dd x^2
+					           & \qand
+					v_t \gets \flatfrac{v}{(1-beta_2^t)}
+					\\
+					x \gets x- & \frac{\alpha m_t}{\sqrt{v_t+\varepsilon}}
+				\end{aligned}
+			\]
+		\end{md}
 	\end{multicols}
 \end{tiny}
 
