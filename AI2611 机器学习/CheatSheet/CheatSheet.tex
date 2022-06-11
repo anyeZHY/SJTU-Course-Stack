@@ -454,22 +454,22 @@
 
 			\subsection{RNN}
 			\[
-				h_{t+1}=\-{Tanh}(W_hh_t+W_xx_{t+1})
+				h_{t+1}=\mathrm{Tanh}(W_hh_t+W_xx_{t+1})
 				.\]
 
 			\subsection{Attention}
 			\[
-				y=\-{SoftMax}\qty(\frac{QK^T}{\sqrt{D}})V
+				y=\mathrm{SoftMax}\qty(\frac{QK^T}{\sqrt{D}})V
 				.\]
 
 			\subsection{Weight Initialization}
-			\[w\gets \sqrt{\flatfrac{2}{n}}\times\-{Rand}\+N(0,1)\]
+			\[w\gets \sqrt{\flatfrac{2}{n}}\times\mathrm{Rand}\+N(0,1)\]
 
 			\subsection{Activate Function}
 			\[
-				\-{Sigmoid}(z)=\frac{1}{1+\exp(-z)}
+				\mathrm{Sigmoid}(z)=\frac{1}{1+\exp(-z)}
 				\qand
-				\-{Tanh}(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
+				\mathrm{Tanh}(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
 			\]
 
 			\subsection{Batch Normalization} (BP for BN is challenging)
