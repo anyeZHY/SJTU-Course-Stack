@@ -1,0 +1,238 @@
+% ! Tex program = xelatex
+\documentclass{article}
+% \PassOptionsToPackage{quiet}{fontspec}% (or try silent)
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../preamble}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+% \tableofcontents
+\title{Homework 4}
+\maketitle
+
+\section*{Problem 1}
+\subsection*{(a)}
+Intuitively, I design the algorithm \ref{11}.
+\begin{algorithm}[htbp]
+	\caption{Find the maximum $(1,1)$-step subsequence}
+	\label{11}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A sequence of integers $a_1,\cdots,a_n$
+		\ENSURE The maximu revenue we can get from a $(1,1)$-step subsequence
+		\STATE $\+R\gets 0$, $M_{\mathrm{cur}}\gets 0$, $i\gets 1$
+		\WHILE{$i\le n$}
+		\STATE $M_{\mathrm{cur}}\gets M_{\mathrm{cur}}+a_i$
+		\IF{$M_{\mathrm{cur}}<0$}
+		\STATE $M_{\mathrm{cur}}\gets 0$
+		\ENDIF
+		\IF{$M_{\mathrm{cur}}>\+M$}
+		\STATE $\+R\gets M_{\mathrm{cur}}$
+		\ENDIF
+		\STATE $i\gets i+1$
+		\ENDWHILE
+		\RETURN $\+R$
+	\end{algorithmic}
+\end{algorithm}
+Ostensively, the complexity of the algorithm is $\+O(n)$.
+
+The soundness of Algo. \ref{11}:
+\begin{itemize}
+	\item 
+		The interpretation of $M_{\mathrm{cur}}^i$ at $a_i$: the maximum ravenue which \textbf{ends} at $a_i$. 
+	\item
+		The propostion above holds by mathematical induction. $M_{\mathrm{cur}}^i=\max(0,M_{\mathrm{cur}}^{i-1}+a_i)$.
+	\item
+		Thus $\+R=\max_iM_{\mathrm{cur}}^i$ which is what we want.
+\end{itemize}
+
+\subsection*{(b)}
+Similarly, we have algorithm \ref{lr}.
+\begin{algorithm}[htbp]
+	\caption{Find the maximum $(L,R)$-step subsequence}
+	\label{lr}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A sequence of integers $a_1,\cdots,a_n$
+		\ENSURE The maximu revenue we can get from a $(L,R)$-step subsequence
+		\STATE $\*M\defeq(M_1,M_2,..,M_n)\gets\*0$
+		\STATE $M_i\gets\max(a_i,0)$ for all $i\in[L]$
+		\FOR{$i=(L+1,L+2,\cdots,n)$}
+		\STATE $M_i=a_i+\max_{j\in\{i-R,\cdots,i-L\}}M_j$ 
+		\COMMENT{Complexity $\+O(R-L)=\+O(n)$}
+		\STATE $M_i\gets \max(M_i,0)$
+		\ENDFOR
+		\RETURN $\max_{i\in[n]}M_i$
+	\end{algorithmic} 
+\end{algorithm}
+
+The correctness of Algo \ref{lr} is almost same with that of Algo \ref{11}. The complexity is obviously $\+O(n^2)$.
+
+\subsection*{(c)}
+Design the algorithm \ref{lr:pro} with the auxiliary of the \textit{Priority Queue}.
+\begin{algorithm}[htbp]
+	\caption{Find the maximum $(L,R)$-step subsequence (\textbf{Pro})}
+	\label{lr:pro}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A sequence of integers $a_1,\cdots,a_n$
+		\ENSURE The maximu revenue we can get from a $(L,R)$-step subsequence
+		\STATE $\*M\defeq(M_1,M_2,..,M_n)\gets\*0$
+		\STATE $M_i\gets\max(a_i,0)$ for all $i\in[L]$
+		\STATE $\mathrm{PLL}=\mathrm{NULL}$
+		\FOR{$i=(L+1,L+2,\cdots,n)$}
+		\IF{PLL.front.index$\le i-R$}
+		\STATE PLL.PopFront
+		\ENDIF
+		\WHILE{PLL.back.value$\le M_{i-L}$}
+		\STATE PLL.PopBack
+		\ENDWHILE
+		\STATE PLL.PushBack($M_{i-L}$)
+		\STATE $M_i=a_i+\mathrm{PLL.Front}$
+		\STATE $M_i\gets \max(M_i,0)$
+		\ENDFOR
+		\RETURN $\max_{i\in[n]}M_i$
+	\end{algorithmic} 
+\end{algorithm}
+
+The complexity is $\+O(n)$ because every element in $a$ will be inserted into PLL once.
+
+The soundness of Algo \ref{lr:pro} intrinsicly hold by the fact that PLL.Front at $i$ is  $\max_{j\in\{i-R,\cdots,i-L\}}M_j$ and $M_i$ is the maximum ravenue which \textbf{ends} at $a_i$.
+
+\section*{Problem 2}
+
+First we define the function $dp(i,j)$: the total number of comparisions for words  $a_i,\cdots,a_j$.
+The transition equation is: 
+\[
+	dp(i,j) = \sum^{j}_{k=i}w_i + \max_{i+1\le k\le j-1} dp(i,k-1)+dp(k+1,j)
+.\]
+Proof: if $k$ is the best BST's root for $i$ to $j$, we obtain $\mathrm{cost}=\sum^{j}_{k=i}w_i + dp(i,k-1)+dp(k+1,j)$.
+
+Then we have the naive algorithm:
+\begin{algorithm}[H]
+	\caption{Find the best BST for the $n$ words with the minimum number of comparisons}
+	\label{bst}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A sequence $\*w=(w_1,w_2,\cdots,w_n)$
+		\STATE Initiate two 2D arrays: $\*n$ and $\*{\mathrm{idx}}$
+		\STATE $n_{i,i}=w_i$ and  $\mathrm{idx}_{i,i}=i$
+		\FOR{$i=n-1,n-2\cdots,1$}
+		\FOR{$j=i+1,i+2,\cdots,n$}
+		\STATE $i\gets t$ and $j\gets k+t-1$\\[3pt]
+		\STATE $\*n(i,j)=\sum^{j}_{k=i}w_i +
+				\min_{[i+1\le k\le j-1]} \qty[\*n(i,k-1)+\*n(k+1,j)]$
+				\\[3pt]
+		\STATE $\*{\mathrm{idx}}\gets\argmin_{[i+1\le k\le j-1]}\*n(i,k-1)+\*n(k+1,j))$
+		\ENDFOR
+		\ENDFOR
+	\end{algorithmic} 
+\end{algorithm}
+Now we could construct the tree with $\*{\mathrm{idx}}$:
+\begin{enumerate}
+	\item 
+		Let the root be $\*{\mathrm{idx}}[1,n]$.
+	\item
+		If $k$ is the root of the BST for $a_i,\cdots,a_j$, then $k$'s left child is  $\*{\mathrm{idx}}[i,k-1]$ and its right child is $\*{\mathrm{idx}}[k+1,j]$.
+	\item
+		Do step 2 \textbf{recusively}.
+\end{enumerate}
+The complexity is $\+O(n^3)$. The soundness of the algorithm depends on that of the transition equation.
+
+\section*{Problem 3}
+For given string $s$: $\bar{s}_{i,j}\defeq s[i:j]$ which is a consecutive subsequencee of $s$. Then we define $f(i,j)$ as the longest palindrome with length $l(i,j)$ that is a subsequence of  $\bar{s}_{i,j}$.
+Then
+\begin{equation}
+	\label{eq:pal}
+	l(i,j)=\max\big[l(i+1,j),\,l(i,j-1),\,2\times1(s_i=s_j)+l(i+1,j-1)\big]
+\end{equation}
+And we update $f(i,j)$ correspondingly. The correctness of EQ \ref{eq:pal} is trivial. Here's the \textit{story}:
+\begin{itemize}
+	\item If $s_i\ne s_j$, then the lonest palindrome is in $\bar{s}_{i,j-1}$ or in  $\bar{s}_{i+1,j}$.
+	\item If $s_i=s_j$, we have a new choice: $\mathrm{append}(s_i,s',s_j)$ where $s'$ is in $\bar{s}_{i+1,j-1}$.
+\end{itemize}
+Hence we design the algorithm \ref{pal}.
+\begin{algorithm}[htbp]
+	\caption{find the longest palindrome that is a subsequence of a string}
+	\label{pal}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A string $s$
+		\STATE Initiate 2 2D arrays: $\*l$ and $\*f$
+		\STATE $l_{i,i}=1$, $f_{i,i}=s_i$ and $l_{i,j}=0$, $f(i,j)=\emptyset$ for all  $i>j$
+		\FOR{$i=n-1,n-2\cdots,1$}
+		\FOR{$j=i+1,i+2,\cdots,n$}
+		\STATE Update l
+		\ENDFOR
+		\ENDFOR
+		\RETURN $f(1,n)$
+	\end{algorithmic}
+\end{algorithm}
+
+The running time is $\+O(n^2)$.
+
+\section*{Problem 4}
+For any given tree $G$ with root $r$, denote $f(r)$ as the number of independent sets in $G$.
+Then
+\[
+	f(r)
+	=
+	\prod_{v\in\{r\text{'s children}\}} f(v)
+	+
+	\prod_{v\in\{r\text{'s grandchildren}\}} f(v)
+.\]
+The first term of $\LHS$ represents the number of independent sets under the case that $r$ is not in these sets.
+Choosing $r$, we will obtain the latter term.
+
+Now we design the algorithm \ref{cni}.
+\begin{algorithm}[htbp]
+	\caption{Count the number of independent sets in a tree}
+	\label{cni}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A tree $G$ with a arbitrary root $r$
+		\STATE Implement BFS from $r$. Assign the depth, parent and children to every vertex. And we could get a sequence $\*v=(v_1,\cdots,v_n)$ where vertices is sorted by their depth.
+		\FOR{$u=(v_1,v_2,\cdots,v_n)$}
+		\IF{$u$ is a leaf}
+		\STATE $f(u)=1$
+		\ELSIF{$u$ has no grandchild}
+		\STATE $f(u)=\prod_{v\in\{u\text{'s children}\}} f(v)$
+		\ELSE
+		\STATE Update $f(u)$ by the transition EQ.
+		\ENDIF
+		\ENDFOR
+		\RETURN 
+	\end{algorithmic} 
+\end{algorithm}
+
+The complexity is $\+O(n)$ because every vertex will be mutiplied at most twice.
+
+\section*{Problem 5}
+About a day.
+Difficulty 3.
+Collaborators: Yinlin Sun.
+\end{document}
+

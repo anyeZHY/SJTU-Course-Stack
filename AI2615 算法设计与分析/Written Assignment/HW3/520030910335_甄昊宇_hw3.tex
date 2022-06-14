@@ -1,0 +1,446 @@
+% ! Tex program = xelatex
+\documentclass{article}
+\usepackage{pst-node}
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../preamble}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+% \tableofcontents
+\title{\vspace{-1.5cm}Homework 3}
+\maketitle
+\section*{Problem 1}
+\textbf{(a).}
+Suppose that $\{d_i\}$ is sorted. If $\exists i\in\{1,2,\cdots,n-1\}$, $d_{i+1}-d_i>C$ or  $D-d_n>C$, then it is NOT possible to reach B from A.
+If not, it is possible.
+\\\\
+\textbf{(b).}
+Intuitively, I design the Algo.\ref{gch} based on Algo.\ref{go}. While Algo.\ref{gch} may be indecipherable because I use a heap to optimize its complexity. The naive version of the backbone (the ``while'') is available at Algo.\ref{gcn}.
+
+The correctness of Algo.\ref{gcn} entails that of Algo.\ref{gch}. I.e., the use of heap just reduce many operations of line 11 in Algo.\ref{gcn}.
+Now I will use mathematical induction to show the soundness of Algo.\ref{gcn}:
+\begin{itemize}
+	\item Suppose that $\*d$ is ordered and $\+S_k$ is the minimum cost from  $A$ to  $d_k$.
+	\item Now the car is at $d_k$ with the corresponding gas $C_{\mathrm{now}}$ left in tank.
+	\item Assume that $(d_{k+1},d_{k+2},\cdots,d_l)\le C+d_k$ while $d_{l+1}>C+d_k$. For simplicity, $\+D\defeq\{k+1,\cdots,l\}$
+	\item \case{1}
+		$\forall i\in\+D$, $p_i>p_k$.
+		The driver should fill the tank full and go to station $m\defeq\argmin_{i\in\+D}p_i$.
+		This is because in $[d_k+C_{\mathrm{now}},d_k+C]$, he will spend $p_k(C-C_k)<p_kl_k+\sum_{i\in\+D}p_il_i$ where $l_k+\sum_{i\in\+D}l_i=C-C_{\mathrm{now}}$.
+	\item \case{2}
+		$\exists i\in\+D$, $p_i\le p_k$ while $(p_{k+1},p_{k+2},\cdots,p_{i-1})>p_k$.
+		If $C_{\mathrm{now}}>d_i-d_k$, go to $i$ directly beacuse $p_k\sum_tl_t<p_i\sum_tl_t$ (station $i$ could cover any point $k$ could reach). If not, fill the tank just to $i$ (i.e., fill the gas tank to $d_i-d_k$). This holds by 
+	\[
+		p_k(C_{\mathrm{now}}+d_i-d_k)+p_k\sum_tl_t
+		<
+		\sum_{t=k}^{i-1}p_tl_t+p_i\sum_tl_t
+	\]where $\sum_{t=k}^{i-1}l_t=C_{\mathrm{now}}+d_i-d_k$.
+\end{itemize}
+
+The complexity of Algo.\ref{gch}: Every stataion is inserted and poped \textbf{once} in the heap. So \[T(n)=\+O(n\log n).\]For \textit{naive} version, the complexity is $\+O(n^2)$.
+\begin{algorithm}[htbp]
+	\caption{$\+{GO}(l,p_k,d_k,d_l,\+S,C_{\mathrm{now}})$}
+	\label{go}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE The car is at station $k$ with gas $C_{\mathrm{now}}$ and cost $\+S$. He want to go to station  $l$ directly.
+		\ENSURE Update the value of $\+S,C_{\mathrm{now}}$ at station $l$.
+		\STATE $\+S\gets\+S+p_k\max(d_l-d_k-C_{\mathrm{now}},0)$
+		\STATE $C_{\mathrm{now}}\gets C_{\mathrm{now}}+\max(d_l-d_k-C_{\mathrm{now}},0)-(d_l-d_k)$
+		\RETURN $(l,\+S,C_{\mathrm{now}})$
+	\end{algorithmic} 
+\end{algorithm}
+\begin{algorithm}[htbp]
+	\caption{Minimize the gas cost}
+	\label{gch}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE Distance $D$, capacity  $C$, and 2 sequence $\*d=\{d_i\},\ \*p=\{p_i\}$  where  $i=1,2,\cdots,n$
+		\ENSURE Minimal cost: $\+S$
+		\STATE $d_{n+1}=D,\ p_{n+1}=+\infty$ and $\*d\gets\*d\cup\{d_{n+1}\},\ \*p\gets\*p\cup\{p_{n+1}\}$
+		\STATE Sort $(d_i,p_i)$ w.r.t. $d_i$ such that $d_i<d_{i+1}$ for all $i$.
+		\STATE $k\gets 1$, $l\gets 2$ and $C_{\mathrm{now}}\gets 0$
+		\STATE Initialize a min-heap $H$ to store $(i,d_i,p_i)$.
+		\STATE In $H$, $(i,d_i,p_i)<(j,d_j,p_j)$ if $p_i<p_j$. Also, $\mathrm{top}(H)$ will return the index instead of $d_i$ or $p_i$.
+		\STATE Insert $(1,d_1,p_1)$ into $H$
+		\WHILE{$k<n+1$}
+		\STATE flag$\gets$False
+		\WHILE{$d_l-d_k<C$}
+		\IF{$p_l\le p_k$}
+		\STATE $k,\+S,C_{\mathrm{now}}\gets\+{GO}(l,p_k,d_k,d_l,\+S,C_{\mathrm{now}})$
+		\COMMENT{Go to $l$ directly}
+		\STATE flag$\gets$True
+		\STATE \textbf{Break}
+		\ENDIF
+		\STATE Insert $(l,d_l,p_l)$ into $H$
+		\STATE  $l\gets l+1$
+		\ENDWHILE
+		\IF{flag}
+		\STATE \textbf{Continue}
+		\COMMENT{We have changed $k$}
+		\ENDIF
+		\WHILE{$\mathrm{top}(H)<k$ and $\mathrm{size}(H)>0$}
+		\STATE $H$.pop()
+		\COMMENT{Pop the stations in front of $k$}
+		\ENDWHILE
+		\IF{$\mathrm{size}(H)<0$}
+		\RETURN IMPOSSIBLE
+		\COMMENT{We could not reach any station at $k$}
+		\ENDIF
+		\STATE $j\gets \mathrm{top}(H)$ and $H$.pop()
+		\IF{$p_j\le p_k$}
+		\STATE $k,\+S,C_{\mathrm{now}}\gets\+{GO}(j,p_k,d_k,d_j,\+S,C_{\mathrm{now}})$
+		\COMMENT{Go to $j$ directly}
+		\ELSE
+			\IF{$C+d_k>D$}
+			\STATE $k,\+S,C_{\mathrm{now}}\gets\+{GO}(n+1,p_k,d_k,d_{n+1},\+S,C_{\mathrm{now}})$
+			\COMMENT{Go to $B$ (the destination)}
+			\ELSE
+				\STATE $\+S\gets\+S+(C-C_{\mathrm{now}})p_k$
+				\COMMENT{Fill the tank full}
+				\STATE $C_{\mathrm{now}}\gets C-C_{\mathrm{now}}$
+				\STATE $k\gets j$
+			\ENDIF
+		\ENDIF
+		\ENDWHILE
+	\end{algorithmic} 
+\end{algorithm}
+\begin{algorithm}[htbp]
+	\caption{The backbone of Algo.\ref{gch}}
+	\label{gcn}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\WHILE{$k<n+1$}
+		\STATE flag$\gets$False
+		\STATE $l\gets k$
+		\FOR{$d_l-d_k<C$}
+		\IF{$p_l<p_k$}
+		\STATE $k,\+S,C_{\mathrm{now}}\gets\+{GO}(l,p_k,d_k,d_l,\+S,C_{\mathrm{now}})$
+		\COMMENT{Go to $l$ directly}
+		\STATE flag$\gets$True
+		\STATE \textbf{Break}
+		\ENDIF
+		\IF{$p_m\ge p_l$}
+		\STATE $m=l$
+		\COMMENT{Find the minimum of $p_l$ station $k$ could reach}
+		\ENDIF
+		\STATE $l\gets l+1$
+		\ENDFOR
+		\IF{flag}
+		\STATE \textbf{Continue}
+		\ENDIF
+		\STATE $k,\+S,C_{\mathrm{now}}\gets\+{GO}(m,p_k,d_k,d_m,\+S,C_{\mathrm{now}})$
+		\COMMENT{Go to $m$ directly}
+		\ENDWHILE
+	\end{algorithmic} 
+\end{algorithm}
+
+\section*{Problem 2}
+\textbf{(1).}
+\begin{algorithm}[H]
+	\caption{$\+M(T)$}
+	\label{c1}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A given tree $T=(V,E)$ with the root $r$
+		\ENSURE A minimum-size subset $\+S$ of vertices that covers all the vertices in $G$ w.r.t $k=1$.
+		\IF{$\abs{V}=1$}
+		\RETURN $V$
+		\ENDIF
+		\STATE $\+S\gets \emptyset$
+		\STATE Implement BFS from root $r$ during which update the height and parent for each vertex
+		\STATE Meanwhile, store the vertex we meet into a stack $s$
+		\COMMENT{In $s$, vertex's height is ordered}
+		\WHILE{$s$ is not empty}
+		\STATE $v\gets s$.top
+		\COMMENT{$v$ has the largest height in $s$}
+		\STATE s.pop
+		\IF{$v$ is not marked}
+		\IF{$v$ is the root}
+		\STATE  $\+S\gets\+S\cup\{v\}$
+		\ENDIF
+		\ELSE
+		\STATE Mark $v$ and get $v$'s parent $u$
+		\STATE $\+S\gets\+S\cup\{u\}$
+		\STATE Mark $u$'s neighbor and $u$ itself
+		\ENDIF
+		\ENDWHILE
+		\RETURN $\+S$
+	\end{algorithmic} 
+\end{algorithm}
+\newpage
+The correctness of Algo.\ref{c1}:
+\begin{itemize}
+	\item 
+		First I need to interpret what Algo.\ref{c1} do: for given $T$, we find its leaves. Put these leaves' parents into $\+S$ and delete them. And do it repeatly. I use a stack and BFS to ameliorate the complexity.
+	\item
+		In $T$, if $u$ is a leaf whose parent is $v$, $v$ must in the vertex cover (because $v$ dominate $u$).
+	\item
+		Then deleting $u$ and $u$'s neighbor, we get a subgraph. It's obvious that $\+S=\+S'\cup\{u\}$ where $\+S'$ is minimum and cover the subgraph
+\end{itemize}
+The complexity: $\+O(\abs{V})$ because:
+\begin{itemize}
+	\item 
+		$\+O(\rm{BFS})=\abs{V}$. Every vertex is pushed and poped once.
+	\item
+		Every vertex is marked at most twice (by ``itself/one of its child'' and by his parent)
+\end{itemize}
+\textbf{(2).} Similarly,
+\begin{algorithm}[H]
+	\caption{$\+M(T)$}
+	\label{ck}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A given tree $T=(V,E)$ with the root $r$
+		\ENSURE A minimum-size subset $\+S$ of vertices that covers all the vertices in $G$ w.r.t $k$.
+		\IF{$\abs{V}=1$}
+		\RETURN $V$
+		\ENDIF
+		\STATE $\+S\gets \emptyset$
+		\STATE Implement BFS from root $r$ during which update the height and parent for each vertex
+		\STATE Meanwhile, store the vertex we meet into a stack $s$
+		\COMMENT{In $s$, vertex's height is ordered}
+		\WHILE{$s$ is not empty}
+		\STATE $v\gets s$.top
+		\COMMENT{$v$ has the largest height in $s$}
+		\STATE s.pop
+		\IF{$v$ is not marked}
+		\IF{$v$'s height$<k$}
+		\STATE  $\+S\gets\+S\cup\{r\}$
+		\RETURN $\+S$
+		\ELSE
+		\STATE Mark $v$ and get $v$'s $k^{\rm{th}}$ ancestor $u$
+		\STATE $\+S\gets\+S\cup\{u\}$
+		\STATE Mark every vertex $t\in\{t\mid d(u,t)\le k\}$ where $d(a,b)$ is the distance between $a$ and  $b$
+		\ENDIF
+		\ENDIF
+		\ENDWHILE
+		\RETURN $\+S$
+	\end{algorithmic} 
+\end{algorithm}
+The soundness of Algo.\ref{ck} is similar as Algo.\ref{c1}.
+\begin{itemize}
+	\item To generalize, I just simply alter the way of marking vertices.
+	\item Also, for every $v'\in T$ could cover the deepest leaf $v$, $v'$ is in $u$'s subtree which contain $v$. And it is obvious that  $u$ dominate  the vertices $v'$ could reach.
+\end{itemize}
+The complexity: $\+O(f(k)\abs{V})$.
+\begin{itemize}
+	\item 
+		The function $f(k)$'s physical interpretation is $\max_T(\text{average times for which a vertex is marked in $T$})$
+	\item 
+		The function $f(\cdot)$ may not be explicit but $f(k)<\abs{V}$ and $f(1)=2$.
+\end{itemize}
+\newpage
+Now I will optimize Algo.\ref{ck}. Indeed, line 18 is redundant.
+This time I will mark vertex with a specific number $m_v$.
+\begin{algorithm}[H]
+	\caption{The optimized version of the ``while'' backbone in $\+M(T)$}
+	\label{ckp}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\WHILE{$s$ is not empty}
+		\STATE $v\gets s$.top
+		\COMMENT{$v$ has the largest height in $s$}
+		\STATE s.pop
+		\STATE $u\gets v$, $flag\gets$True
+		\WHILE{$d(v,u)\le k$}
+		\IF{$u$ is marked and $d(u,v)+m_u\le \Rnode{checkbegin}{k}$}
+		\STATE $flag\gets$False, \textbf{break}
+		\COMMENT{This means that $v$ has been covered}
+		\ENDIF
+		\STATE $u\gets u$'s parent (check before: if $u$ is the root, \textbf{break})
+		\ENDWHILE
+		\IF{$flag$}
+		\STATE $\+S\gets\+S\cup\{u\}$
+		\STATE Mark every vertex $t\in\{t\mid d(u,t)\le k\land t \text{ is the ancestor of $v$}\}$ and $m_t=\min[d(u,t),m_t]$
+		\STATE
+		\COMMENT{We initiate $m_t=+\infty$ for every $t\in V$}
+		\ENDIF
+		\ENDWHILE
+		\RETURN $\+S$
+	\end{algorithmic} 
+\end{algorithm}
+Correctness: 
+\begin{itemize}
+		\item I use a trick to determine whether a vertex has already been covered.
+		\item That is: if his ancestor $u$ is marked with a number $m$. This number tells us that $d(u,t)$ where $t$ is in  $\+S$.
+		\item If $d(u,t)+d(u,v)\le k$, vertex $v$ could be covered by $t$.
+\end{itemize}
+The complexity is $\+O(k\abs{V})$ because every vertex will be marked and \Rnode{checkend}{\underline{checked}} for at most  $2k+1$ times.
+\ncarc[arrows = ->, linecolor =red, arcangle = 20, nodesep = .5pt]{checkbegin}{checkend}
+
+\section*{Problem 3}
+\textbf{(a).}
+Let set $A$ and $B$ be 2 different maximal independent sets of $\+I$. 
+If $\abs{A}<\abs{B}$,  then $A\subset A\cup\{x\}$ where  $x\in B-A$.
+So it holds that $\abs{A}=\abs{B}$
+\\\\
+\textbf{(b).}
+\begin{defi}
+	$A$ is a set containing edges.  $\+F_A\defeq (V_A,A)$ where $V_A\defeq\{v|(v,u)\in A \text{ for some }u\}$.
+\end{defi}
+\begin{lemma}
+	For all $A\in\+I$,  $\+F_A$ is a forest.
+\end{lemma}
+By lemma and defination above,
+\begin{itemize}
+	\item 
+		Trivially, $A$ is hereditary. A forest's subgraph is a forest.
+	\item
+		Let set $A,B\in\+I$ such that  $\abs{A}<\abs{B}$.
+		We have $\abs{V_A}<\abs{V_B}$. There exists $v\in V_B$, $v\notin V_A$. Also, $\exists e=(v,v')\in B-A$. Finnaly, $A\cup\{e\}\in\+I$ because $v$ in $\+F_{A\cup\{e\}}$ is a leaf. The exchange property holds for $\+I$.
+\end{itemize}
+Apparently, the maximal sets of this matroid is the maximum spanning forest of $G$.
+\\\\
+\textbf{(c).}
+Firstly, $\{x\}\in\+I$ and $\forall w(y)>w(x):\{y\}\notin\+I$. Suppose that $\+S$ is the maximal independent set with maximum weight. By finite steps we could generate a maximal independent set $\+S'$:
+\begin{enumerate}
+	\item $\+S'=\{x\}$ 
+	\item Update  $\+S'$ following exchange property: $\abs{\+S'}<\abs{\+S}$. Then $\+S'\gets \+S'\cup\{x'\}$ where $x'\in\+S-\+S'$.
+	\item  Do step 2 repeatly and finnaly we have $\abs{\+S}=\abs{\+S'}$.
+\end{enumerate} 
+Obviously, $\abs{\+S'-\+S}\le 1$. Thus $w(\+S')\ge w(\+S)$ because $w(x)=\argmax_{y\in\{y|\{y\}\in\+I\}}w(y)$. Ultimately, $\+S'$ is what we want.
+\\\\
+\textbf{(d).}
+Proof by mathematical induction. The abbreviation ``MISMW'' means the maximal independent set with maximum weight.
+\begin{itemize}
+	\item 
+		The first element the algorithm added to $\+S$ is $x_1$. By (c), $\exists \+S'\in\+I$ such that $\{x_1\}\subset\+S'$.
+	\item Suppose that the algorithm has added $\{x_1,x_2,\cdots,x_k\}$ into $\+S$. And $\exists \+S_k\in\+I$ such that $\+S\subset\+S_k$.
+	\item  Now the algorithm will add  $x_{k+1}$ into $\+S$. Some property we could conclude:  $\forall y$ such that $w(x_{k+1})<w(y)$ and $y \ne (x_1,\cdots,x_k)$, there's no MISMW containing $\{x_1,x_2,\cdots,x_k,y\}$.
+		Then we could do step.2 in (c) repeatly with $\+S_k$. And finally we will get $\+S_{k+1}$ which is a MISMW and contains  $\{x_1,x_2,\cdots,x_{k+1}\}$. (Nota bene: this is true by $\abs{\+S_{k+1}-\+S_k} \le 1$ and the property mentioned above.)
+\end{itemize}
+\textbf{(e).}
+Let $\+I=\qty{u\subset U|\,\text{vectors in $u$ is linearly independent}}$. Obviously $M=(U,\+I)$ is a matroid: $M$ is naturally hereditary. Also if $\abs{A}<\abs{B}$, then $\exists \vec{v}\in B$ such tht $A\cup\{\vec{v}\}$ is linearly independent by the fact that $\dim(\-{span}(A))<\dim(\-{span}(B))$.
+
+So we just run the algorithm given in problem set with a tuning: check whether $S\cup\{x\}$ is linearly independent. Here's the implementation of the check:
+\\
+\begin{algorithm}[htbp]
+	\caption{$\+F(\*x,C)$: minimize the number of machines approximately}
+	\label{li}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A linearly independent set $S=\{\*s_1,\*s_2,\cdots,\*s_k\}$ and a vector  $\*x$
+		\ENSURE True or False: $S\cup\{x\}$ is linearly independent
+		\STATE  $m\gets 1$
+		\WHILE{$\*x\ne \*0$ and $m\le k$}
+		\STATE $\*x\gets\*x-(\*s_m\cdot\*x)\*s_m$
+		\COMMENT{Part of Gram-–Schmidt Process}
+		\STATE $m\gets m+1$
+		\ENDWHILE
+		\RETURN $\*x\ne \*0$
+	\end{algorithmic}
+\end{algorithm}
+The complexity is $\+O(n^2)$.
+
+\newpage
+\section*{Problem 4}
+\textbf{(a).}
+\begin{algorithm}[htbp]
+	\caption{$\+F(\*x,C)$: minimize the number of machines approximately}
+	\label{nbin}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE $n$ jobs with sizes $x_i<C$, the capacity of machines  $C$
+		\ENSURE  approximately minimum number of machine: $m$
+		\STATE $m\gets 1$, $l\gets 1$ and $\+M_1,\+M_2,\cdots,\+M_n=0$
+		\STATE Sort $x_i$ such that  $x_i>x_j$ for all  $i<j$
+		\WHILE{$l\le n$}
+		\STATE $j\gets \argmin_{0<i<m}\+M_i$
+		\COMMENT{Using a heap to put $\+M$}
+		\IF{$\+M_j+x_l\le C$}
+		\STATE $\+M_j\gets \+M_j+x_l$
+		\ELSE
+			\STATE $\+M_m\gets x_l$
+			\STATE $m\gets m+1$
+		\ENDIF
+		\STATE $l\gets l+1$
+		\ENDWHILE
+		\RETURN $\sum_{i=1}^n1[\+M_i\ne0]$
+	\end{algorithmic} 
+\end{algorithm}
+Analysis of Algo.\ref{nbin}:\\[6pt]
+Now we want to bound ALG$\defeq m$. For simplicity, let $\min\defeq\min_ix_i$.
+If $\min>\flatfrac{C}{2}$, then obviously ALG=OPT. If not:
+\[
+	(\-{ALG}-1)(C-\min)+\min<\sum_ix_i\le C\cdot\-{OPT}
+,\] which means tht
+\begin{equation}
+	\-{ALG}<\frac{C\cdot\-{OPT}-\min}{C-\min}+1
+	\implies
+	\-{ALG}\le 2\-{OPT}-1.
+	\label{opt}
+\end{equation}
+The complexity is $\+O(n\log n)$.
+\\[5pt]
+Reference: \href{https://www.cs.jhu.edu/~mdinitz/classes/ApproxAlgorithms/Spring2015/notes/lec8.pdf}{Approximation Algorithms, Johns Hopkins University}.
+\\\\
+\textbf{(b).} For simplicity and without loss of generality, let $C=1$.
+ 
+My intuition:
+\begin{itemize}
+	\item If $\min\le \flatfrac{1}{3}$. From Eq.\ref{opt} we conclude $\rm{ALG}<\flatfrac{3}{2}\rm{OPT}+\+O(1)$.
+	\item If $\forall i$, $x_i>\flatfrac{1}{3}$, then we have a smaller problem. Also, there are several machines which only complete one job with size $x_i>\flatfrac{2}{3}$. Let $\+S_1=\{x_i|\flatfrac{2}{3}\le x_i\}$.
+	\item Let $\+S_2=\{x_i|\flatfrac{1}{2}<x_i<\flatfrac{2}{3}\}$ and $\+S_3=\{x_i|\flatfrac{1}{3}<x_i<\flatfrac{1}{2}\}$. If $\abs{\+S_2}<\abs{\+S_3}$, then the problem is trivial. Because the number of machines $m=\abs{\+S_1}+\abs{\+S_3}$.
+	\item If $\abs{\+S_2}>\abs{\+S_3}$, $m=\abs{\+S_1}+\abs{\+S_3}+\text{minimum number to complete $\+S_2$}$. (Then we have a smaller problem and do this repeatly)
+\end{itemize}
+While the performance of procedure above depends on the input's distribution. I.e., if $\*x$ centers around $\flatfrac{1}{2}$, we get $\rm{ALG}<2\rm{OPT}-1$ again.
+
+So I refer to \href{https://en.wikipedia.org/wiki/First-fit_bin_packing#cite_note-Ullman713-1}{First-fit bin packing, Wikipedia} to desing Algo.\ref{pbin} whose performance is: $\rm{ALG}\le \flatfrac{5}{3}\rm{OPT}+\+O(1)$. (While I could not prove this proposition.)
+\\[5pt]
+\begin{algorithm}[htbp]
+	\caption{minimize the number of machines approximately}
+	\label{pbin}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE $n$ jobs with sizes $x_i<C$, the capacity of machines  $C$
+		\ENSURE  approximately minimum number of machine: $m$
+		\STATE $S_1,S_2,S_3,S_4\gets\emptyset$,  $i\gets 1$
+		\WHILE{$i\le n$}
+		\IF{$\flatfrac{C}{2}<x_i\le C$}
+		\STATE $S_1\gets S_1\cup\{x_i\}$
+		\ENDIF
+		\IF{$\flatfrac{2C}{5}<x_i\le \flatfrac{C}{2}$}
+		\STATE $S_2\gets S_2\cup\{x_i\}$
+		\ENDIF
+		\IF{$\flatfrac{C}{3}<x_i\le \frac{2C}{5}$}
+		\STATE $S_3\gets S_3\cup\{x_i\}$
+		\ENDIF
+		\IF{$x_i\le \flatfrac{C}{3}$}
+		\STATE $S_4\gets S_4\cup\{x_i\}$
+		\ENDIF
+		\ENDWHILE
+		\RETURN $\+F(S_1,C)+\+F(S_2,C)+\+F(S_3,C)+\+F(S_4,C)$
+	\end{algorithmic} 
+\end{algorithm}
+
+\section*{Problem 5}
+About 3 days. Difficulty 4. Talked with Yilin Sun and Wei Jiang.
+\end{document}

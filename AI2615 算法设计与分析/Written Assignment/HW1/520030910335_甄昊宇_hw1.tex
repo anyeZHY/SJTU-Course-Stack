@@ -1,0 +1,308 @@
+% ! Tex program = xelatex
+\documentclass{article}
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../preamble}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+% \tableofcontents
+\title{Written Assignment 1}
+\maketitle
+\section*{Problem 1}
+Firstly, we have
+\[
+	\begin{aligned}
+		T(n)=a^{\log_bn}\times\+O(1)+
+		\+O(n^d\log^wn)+
+		a\times\+O\qty(\qty(\frac{n}{b})^d\log^w\qty(\frac{n}{b}))
+		+\cdots+
+		a^m\times\+O\qty(\qty(\frac{n}{b^m})^d\log^w\qty(\frac{n}{b^m}))
+	\end{aligned}
+\] where $m=\log_b n$.
+More compactly,
+\[
+	\begin{aligned}
+		T(n)
+		&=\+O\qty(a^{\log_bn})+
+		\sum_{i=0}^m
+		\+O\qty(\qty(\frac{a}{b^d})^in^d\log^w\qty(\frac{n}{b^i}))
+	\end{aligned}
+.\] 
+\case{1} If $a=b^d$:
+ \[
+	 \begin{aligned}
+		 T(n)
+		 =\+O(n^d)+\sum_{i=0}^m
+		 \+O\qty(n^d\log^w\qty(\frac{n}{b^i}))
+		 =
+		 \sum_{i=0}^m\+O\qty(n^d\log^wn)
+		 =
+		 m\times\+O(n^d\log^{w}n)
+		 =
+		 \+O(n^d\log^{w+1}n)
+	 \end{aligned}
+.\] 
+\case{2} If $a<b^d$:
+ \[
+	 \begin{aligned}
+		 T(n)
+		 &=
+		 \+O(n^{\log_ba})+
+		 \sum_{i=0}^m
+		 \+O\qty(\qty(\frac{a}{b^d})^in^d\log^wn)
+		 \\&=
+		 \+O(n^{\log_ba})+
+		 \frac{1-\qty(\flatfrac{a}{b^d})^m}
+		 {1-\flatfrac{a}{b^d}}
+		 \+O\qty(n^d\log^wn)
+		 \\[5pt]&=
+		 \+O(n^{\log_ba})+\+O(n^d\log^wn)
+		 \\&=
+		 \+O(n^d\log^wn)
+	 \end{aligned}
+.\] 
+\case{3} If $a>b^d$: $\forall \varepsilon>0$
+\[
+	\begin{aligned}
+		T(n)&=
+		\+O(n^{\log_ba})+
+		\sum_{i=0}^m\+O\qty(\qty(\frac{a}{b^d})^in^d\qty(\frac{n}{b^i})^\varepsilon)
+		\\&=\+O(n^{\log_ba})+
+		\frac{1-\qty(\flatfrac{a}{b^{d+\varepsilon}})^m}
+		{1-\flatfrac{a}{b^{d+\varepsilon}}}\+O\qty(n^{d+\varepsilon})
+		\\[5pt]&=
+		\+O(n^{\log_ba})+
+		\qty(\flatfrac{a}{b^{d+\varepsilon}})^m\+O\qty(n^{d+\varepsilon})
+		\\[5pt]&=\+O(n^{\log_ba+\varepsilon})
+		\longrightarrow\+O\qty(n^{\log_ba})
+	\end{aligned}
+.\]
+\\
+Finally the generalization of the master theorem holds.
+Reference: \href{https://facultystaff.richmond.edu/~dszajda/classes/cs315/Spring_2020/lectures/Divide-and_conquer2020.pdf}{CS315 Richmond University}.
+\newpage
+\section*{Problem 2}
+Design the function $\mathrm{Merge}$ recursivly:
+\begin{algorithm}[H]
+	\caption{Merge sort with one third dividing approach}
+	\begin{algorithmic}
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\REQUIRE A sequence $\qty{a_i}$ to be sorted where $i\in\set{1,2, \cdots,L}$.
+		\ENSURE $\qty{R_i}$.
+		\IF{$L==1$}
+		\STATE $R_1=a_1$
+		\RETURN		
+		\ENDIF
+		\IF{$L==2$}
+		\STATE $R_1=\min(a_1,a_2)$ and $R_2=\max(a_1,a_2)$
+		\RETURN		
+		\ENDIF
+		\STATE $\qty{b_i}\gets \qty{a_1,a_2, \cdots a_{[\flatfrac{n}{3}]}}$
+		\STATE $\qty{c_i}\gets \qty{a_{[\flatfrac{n}{3}]+1},a_{[\flatfrac{n}{3}]+2}, \cdots a_L}$\\[5pt]
+		\STATE $\{S_i\}\gets\mathrm{Merge}\qty(\qty{b_i},[\flatfrac{n}{3}])$\\[4pt]
+		\STATE $\{T_i\}\gets\mathrm{Merge}(\qty{c_i},n-[\flatfrac{n}{3}])$\\[4pt]
+		\STATE $f_1\gets 1$, $f_2\gets 1$ and $i\gets 1$.
+		\WHILE{$\qty(f_1\le [\flatfrac{n}{3}]\land f_2\le n-[\flatfrac{n}{3}])$}
+		\IF{$f_2>n-[\flatfrac{n}{3}]$ or $b_{f_1}<c_{f_2}$}
+		\STATE $R_i\gets b_{f_1}$
+		\STATE $f_1\gets f_1+1$
+		\ELSE
+			\STATE $R_i\gets c_{f_2}$
+			\STATE $f_2\gets f_2+1$
+		\ENDIF
+		\STATE $i\gets i+1$
+		\ENDWHILE
+		\RETURN
+	\end{algorithmic} 
+\end{algorithm}
+\textbf{The Soundness} of ALG.1: 
+
+Proof by induction. Trivially, when $n=1,2$, satisfied. Suppose that $\mathrm{Merge}(A,n)$ could successfully sort  $A$ for any  $n\le k$. Then the result $R_i$ of $\mathrm{Merge}(A,k+1)$ satisfies that: $\forall i$, assume $R_{i}=S_k$, then  $R_{i+1}=S_{k+1}\mbox{ or }T_k>R_i$ by the ``if'' condition. Thus $R$ is sorted.
+\\
+\\
+\textbf{Complexity Analysis} of ALG.1:
+
+Thus we have
+\[
+	T(n)=T\qty(\frac{n}{3})+T\qty(\frac{2n}{3})+\+O(n)
+.\] 
+$\exists B>0$, $\displaystyle \exists C=\qty[\frac{1}{3}\log3+\frac{2}{3}\log(\frac{3}{2})]^{-1}B$:
+\[
+	\begin{aligned}
+		T(n)&\le
+		C\frac{n}{3}\log(\frac{n}{3})+C\frac{2n}{3}\log(\frac{2n}{3})+Bn
+		\\&\le
+		Cn\log(n)-(\frac{1}{3}\log3+\frac{2}{3}\log(\frac{3}{2}))Cn+Bn
+		\\[4pt]&\le
+		Cn\log n
+	\end{aligned}
+\] which means that $T(n)=\+O(n\log n)$.
+
+\newpage
+\section*{Problem 3}
+The solution of (b).
+\begin{algorithm}[H]
+	\caption{Find the second largest integer}
+	\begin{algorithmic}
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\REQUIRE A squence $\{A_i\}$ where $i\in\qty{1,2, \cdots,2^k}$
+		\ENSURE $R$, the second largest integer in $\qty{A_i}$\\[5pt]
+		\STATE $m\gets 1$, $S\gets \qty{A_i}$
+		\WHILE{$m\le k$}
+		\STATE Partition $S$ into subsets $\{S_i^{m}\}$ with size 2.\\[3pt]
+		\STATE For each $S^m_i$, find the max integer $A^{m}_i$. \# Comparation 1\\[3pt]
+		\STATE $S\gets\{A^m_i\}$, $m\gets m+1$\\[3pt]
+		\ENDWHILE
+		\STATE Finally we have the maximum $M\defeq A^k_1$ in $\{A_i\}$.\\[3pt]
+		\STATE $T\gets \bigcup S^m_i-\{M\}$ where  $M\in S^m_i$\\[3pt]
+		\STATE Use a single step in Bubble Sort to find the maximum $M'$ in T. \# Comparation 2\\[3pt]
+		\RETURN $M'$
+	\end{algorithmic}
+\end{algorithm}
+\textbf{The Soundness} of ALG.2: the second largest integer $M'$ must be compared with $M$ in ``while''. If not,  $\exists\ x$ such that $M>x>M'$ which leads to a contradiction.
+\\\\
+Times to compare: $\abs{T}=k$ and  $\abs{\qty{S^m_i}}=2^{k-m}$. Thus
+\[
+	\mathrm{NumOfComp}=\abs{T}+\sum_{m=1}^k\abs{\qty{S^m_i}}=2^k+k-1<n+\log n
+.\] 
+
+\section*{Problem 4}
+\textbf{(a)}
+\begin{algorithm}[H]
+	\caption{count the number of pairs when $d=1$}
+	\label{d=1}
+	\begin{algorithmic}
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\REQUIRE $A,B$
+		\STATE Sum $\gets 0$
+		\STATE Sort $A$: $a_1<a_2<\cdots<a_k$
+		\STATE Sort $B$:  $b_1<b_2<\cdots<b_l$
+		\STATE $f_1\gets 1$,  $f_2\gets 1$ and $f\gets 0$
+		\WHILE{$f_1\le k$ and $f_2\le l$}
+		\IF{$f_2>l$ or $a_{f_1}<b_{f_2}$}
+		\STATE $f_1\gets f_1+1$
+		\STATE $\mathrm{Sum}\gets\mathrm{Sum}+f$
+		\ELSE
+			\STATE $f_2\gets f_2+1$
+			\STATE $f\gets f+1$
+		\ENDIF
+		\ENDWHILE
+		\RETURN Sum
+	\end{algorithmic}
+\end{algorithm}
+\textbf{The Soundness} of ALG.3:
+Trivial. We just sort $A$ and $B$. And $\={sum}=\sum_i\qty(\sum_j\*1(b_j<a_i))$
+\\\\
+\textbf{Complexity Analysis:}
+\[
+	T(n)=\+O(a\log a)+\+O(b\log b)+\+O(n)=\+O(n\log n)
+.\] 
+\newpage
+\textbf{(b)}
+Note: we only sort $A,B$ for the first time.
+\begin{algorithm}[H]
+	\caption{count the number of pairs when $d=2$}
+	\begin{algorithmic}
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\REQUIRE $A,B\in\RR^2$
+		\ENSURE Sum
+		\IF{$\abs{A}=0$ or $\abs{B}=0$}
+		\RETURN 0
+		\ENDIF
+		\STATE $\mathrm{Sum}\gets 0$
+		\IF {$A,B$ are not sorted}
+		\STATE Sort $A$ and $B$ for each dimension ($x$ and $y$) \# $\+O(n\log n)$
+		\ENDIF
+		\STATE Find the median $m$ of $A\cup B$ for $x$-axis \# $\+O(n)$
+		\STATE Patition $A$ into  $A_1$ and $A$ where $A_1\cup A_2=A$ and $\forall a\in A_1,a'\in A_2$, $a_x\le m<a'_x$
+		\STATE Similarly, partition $B$ into  $B_1$ and $B_2$
+		\STATE \# Do recursively and reduce the dimensionality
+		\STATE $\mathrm{Sum1}\gets\mathrm{Count}(A_1,B_1,\mathrm{dimension}=2)$ \# $S(\flatfrac{n}{2})$
+		\STATE $\mathrm{Sum2}\gets\mathrm{Count}(A_2,B_2,\mathrm{dimension}=2)$ \# $S(\flatfrac{n}{2})$
+		\STATE $\mathrm{Sum3}\gets\mathrm{Count}(A_2,B_1,\mathrm{dimension}=1,\mathrm{axis}=y)$ \# $\+O(n)$ (We have already sorted $A_y$ and  $B_y$.)
+		\RETURN $\mathrm{Sum1}+\mathrm{Sum2}+\mathrm{Sum3}$
+	\end{algorithmic}
+\end{algorithm}
+\textbf{The Soundness} of ALG.4: same as \textbf{The Soundness} of ALG.5.
+\\\\
+\textbf{Complexity Analysis:}
+Thus we have $T(n)=S(n)+\+O(n\log n)$ where
+\[
+	S(n)=S\qty(\frac{n}{2})+\+O(n)\Longrightarrow S(n)=\+O(n\log n)
+.\]
+Finally, $T(n)=\+O(n\log n)$.
+\\[8pt]
+\textbf{(c)}
+\begin{algorithm}[H]
+	\caption{count the number of pairs when $\mathrm{dimension}=d$}
+	\begin{algorithmic}
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\REQUIRE $A,B\in\RR^2$
+		\ENSURE Sum
+		\IF{$\abs{A}=0$ or $\abs{B}=0$}
+		\RETURN 0
+		\ENDIF
+		\STATE $\mathrm{Sum}\gets 0$
+		\IF {$A,B$ are not sorted}
+		\STATE Sort $A$ and $B$ for each dimension \# $\+O(dn\log n)$
+		\ENDIF
+		\STATE Find the median $m$ of $A\cup B$ for the first axis \# $\+O(n)$
+		\STATE Patition $A$ into  $A_1$ and $A$ where $A_1\cup A_2=A$ and $\forall a\in A_1,a'\in A_2$, $a_x\le m<a'_x$
+		\STATE Similarly, partition $B$ into  $B_1$ and $B_2$
+		\STATE \# Do recursively and reduce the dimensionality
+		\STATE $\mathrm{Sum1}\gets\mathrm{Count}(A_1,B_1,\mathrm{dimension}=d,\mathrm{axis}=\{1,2, \cdots,d\})$ \# $S(\flatfrac{n}{2},d)$
+		\STATE $\mathrm{Sum2}\gets\mathrm{Count}(A_2,B_2,\mathrm{dimension}=d,\mathrm{axis}=\{1,2, \cdots,d\})$ \# $S(\flatfrac{n}{2},d)$
+		\STATE $\mathrm{Sum3}\gets\mathrm{Count}(A_2,B_1,\mathrm{dimension}=d-1,\mathrm{axis}=\{2,3, \cdots,d\})$ \# $S(n,d-1)$ (We have already sorted $A$ and $B$.)
+		\RETURN $\mathrm{Sum1}+\mathrm{Sum2}+\mathrm{Sum3}$
+	\end{algorithmic}
+\end{algorithm}
+\newpage
+\textbf{The Soundness} of ALG.5:
+Obviously, $\forall a\in A_1$, $b\in B_2$, $(a,b)$ is not the pair we want. Then $\forall a\in A_2$, $b\in B_1$, $a_1>b_1$. Then we only need to count $A_2,B_1$ for dimension $d-1$.
+\\\\
+\textbf{Complexity Analysis:}
+
+Now we have $T(n,d)=\+O\qty(dn\log(n))+S(n,d)$ where
+\[
+	S(n,d)=2S\qty(\frac{n}{2},d)+S(n,d-1)+\+O(n)
+.\] 
+\begin{prp}
+	\[
+		S(n,d)=\+O(n\log^{d-1}n)
+	.\] 
+\end{prp}
+\begin{proof}
+	When $d=2$, satisfied. Now we suppose that when  $d\le k$, $S(n,d)=\+O(n\log^{d-1}n)$.
+
+	Thus we have
+	\[
+		S(n,k+1)=2S\qty(\frac{n}{2},k+1)+\+O(n\log^kn)
+	.\]
+	By the general master Thm. in problem 1: $S(n,k+1)=\+O(n\log^{k+1}n)$.
+\end{proof}
+Ultimately,
+\[
+	T(n)=\+O\qty(n\log^{d-1}n+nd\log(n))
+.\] 
+
+\section*{Problem 5}
+About a day. Difficulty 3. No collaborators.
+
+\end{document}
+

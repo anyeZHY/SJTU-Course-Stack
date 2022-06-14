@@ -1,0 +1,72 @@
+% ! Tex program = xelatex
+\documentclass{article}
+
+\input{../preamble}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+
+\title{Homework 6}
+\maketitle
+
+\section*{(b)}
+Let $f$ whose inputs are 2 graphs $H$ and $G$ denote the subgraph problem.
+\begin{itemize}
+	\item $f\in\text{NP}$
+
+		Let $\+M$ be a injective mapping from $V_H$ to $V_G$. Then the string $y$ representing $\+M$ is the certificate in a Turning machine $\+A$.
+		If for all $u,v\in V_H$ such that $\{u,v\}\in E_H\implies \{\+M(u),\+M(v)\}\in E_G$ and $\{u,v\}\notin E_H\implies\{\+M(u),\+M(v)\}\notin E_G$, then $\+A(x,y)=1$ (note taht $\+A(x,y)=0$ otherwise).
+		This could be done in $\+O(\abs{E})$ time.
+
+	\item $\text{Clique}\,\le_k f$
+
+		Obviously, a loop containing $k$ vetices is a subgraph  $G$ \textbf{iff} $G$ has a $k$-clique.
+\end{itemize}
+
+Finally, we obtain that $f$ is NP-complete.
+
+\section*{(e)}
+Here we face the ``SubsetSum0'' problem. In the lecture we've already proved that SubsetSum+ is NP-complete.
+
+ \begin{itemize}
+	 \item Obviously, $\text{SubsetSum0}\,\in\text{NP}$ because addition operation is petty.
+	 \item
+		 $\text{SubsetSum}+ \le_k \text{SubsetSum}0$ (Indeed, trivial proposition)
+
+		 \texttt{Proof:}
+		 Let $S$ denote the set of positive integers. We want to decide whether $\exists A\subseteq S$ such that $\sum_{a\in A}=k$.
+		 Now $S^\dagger \gets S\cup\{-k\}$ and feed $S$ into  SubsetSum0 algorithm. We could get a set $B$ such that $\sum_{b\in B}b=0$. Note that $-k\in B$ and we have  $\sum_{a\in B-\{-k\}}a=k$.
+\end{itemize}
+Thus, ``SubsetSum0'' is NP-complete.
+
+\section*{(f)}
+$f$ denotes the decision problem whose inputs are a colored graph $G$ and a number $k$.
+\begin{itemize}
+	\item $f\in$NP
+
+		For any given $G$ which is colored: we could check whether all vertices will eventually become black after updates in  $\+O(\abs{V}\abs{E})$ time.
+
+	\item $g\defeq k\text{-Vertex-Cover}\,\le_k f$
+
+		\texttt{Proof:} 
+		Assume that $(G,k)$ is input of  $g$. I.e., we want to decide whether there exists a vertex cover whose size is  $k$ in $G$.
+		Here we colour all vertices in $G$ \textbf{white} and feed it into $f$ with $k$.
+		\begin{lemma}
+			$u,v$ are white and  $(u,v)\in E$ $\implies$ $u,v$ will be white forever. (This is a stable structure.)
+			\label{stable}
+		\end{lemma}
+		Naturally, lemma \ref{stable} entails the following lemma.
+		\begin{lemma}
+			If a coloured $G$ will end with a black one, then  $\forall (u,v)\in E$, $u$ is black or  $v$ is black, which means that $G$ is \textbf{covered} by balck vertices.
+			\label{black}
+		\end{lemma}
+		
+		Thus, $g(G,k)=f(G_{\mathrm{white}},k)$.
+\end{itemize}
+
+Hence we could deduce that $f$ is NP-complete.
+
+\section*{Misc}
+5-6 hours. Difficulty 2. No collaborator.
+\end{document}
