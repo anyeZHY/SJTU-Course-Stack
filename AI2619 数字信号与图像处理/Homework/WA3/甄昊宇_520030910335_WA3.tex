@@ -1,0 +1,156 @@
+% ! Tex program = xelatex
+\documentclass{article}
+\newcommand*{\circled}[1]{\lower.7ex\hbox{\tikz\draw (0pt, 0pt)circle (.5em) node {\makebox[1em][c]{\small #1}};}}
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../preamble}
+
+\graphicspath{{figures/}}
+\setlength{\headheight}{14pt}
+\fancyhead[C]{\large\textbf{Written Assignment 3}}
+\begin{document}
+% \tableofcontents
+% \title{}
+% \maketitle
+
+\section*{Question 1}
+$A[n]=\{a_0,\,a_1,\,\cdots,\,a_m\}$ denotes $A[0]=a_0,\,A[1]=a_1,\,\cdots,\,A[m]=a_{m}$.
+\[
+	x[n]=\{1,\,0,\,-1,\,0\}\text{ and  }h[n]=\{1,\,2,\,4,\,8\}
+	.\]
+\textbf{(a).}
+\[
+	X[k]=\sum_nx[n]e^{\flatfrac{-j\pi kn}{2}}=\{0,\,2,\,0,\,2\}
+	.\]
+\\
+\textbf{(b).}
+\[
+	\begin{aligned}
+		H[k]
+		=\sum_nh[n]e^{\flatfrac{-j\pi kn}{2}}
+		=\{15,\,-3+6j,\,-5,\,-3-6j\}
+	\end{aligned}
+	.\]
+\\
+\textbf{(c).} By defination,
+\[
+	x[n]\circled{4}h[n]
+	=
+	\{-3,\,-6,\,3,\,6\}
+	.\]
+\\
+\textbf{(d).}
+$Y[n]=X[n]\cdot H[n]=\{0,\,-6+12j,\,0,\,-6-12j\}$. Thus
+\[
+	y[n]
+	=
+	\frac{1}{N}\qty{\mathrm{DFT}\qty(Y^*[n])}^*
+	=
+	\frac{1}{4}\{-12,\,-24,\,12,\,24\}
+	=
+	\{-3,\,-6,\,3,\,6\}
+	.\]
+\section*{Question 2}
+\textbf{(a).}
+\case{1}
+$\forall r\in\ZZ$, $m-k\ne r(N+1)$.
+\[
+	\begin{aligned}
+		\LHS
+		 & =
+		\sum_{n=\flatfrac{N}{2}}^{\flatfrac{N}{2}}\exp[-\frac{2j\pi n(m-k)}{N+1}]
+		\\[6pt]&=
+		\flatfrac
+		{\qty{\exp[\frac{j\pi(m-k)N}{N+1}]-\exp[\frac{j\pi(m-k)(N+2)}{N+1}]}}
+		{\qty{1-\exp[-\frac{2j\pi(m-k)}{N+1}]}}
+		\\[6pt]&=0
+	\end{aligned}
+	.\]
+\case{2}
+$\exists r\in\ZZ$, $m-k=r(N+1)$.
+\[
+	\LHS
+	=
+	\sum_{n=\flatfrac{N}{2}}^{\flatfrac{N}{2}}1
+	=N+1
+	.\]
+Thus $\LHS=\RHS$.
+\newpage
+\textbf{(b).}
+I use Dirac Braket $\braket{\cdot}{\cdot}$ to represent inner product.
+
+Then \[\vec{F}=\frac{1}{N+1}\sum_{k=\flatfrac{-N}{2}}^{\flatfrac{N}{2}}\braket{f}{\hat{e}_k}\hat{e}_k.\]
+By the orthogonality property that $\braket{\hat{e}_k}{\hat{e}_m}=0$ if $m\ne k$ otherwise $\braket{\hat{e}_k}{\hat{e}_m}=N+1$:
+\[
+	f_m
+	=
+	\braket{F}{\hat{e}_m}
+	=
+	\frac{1}{N+1}
+	\sum_{k=\flatfrac{-N}{2}}^{\flatfrac{N}{2}}
+	\braket{f}{\hat{e}_k}
+	\braket{\hat{e}_k}{\hat{e}_m}
+	=
+	\braket{f}{\hat{e}_m}
+	,\] which means
+\[
+	f_m=\sum_{k=\flatfrac{-N}{2}}^{\flatfrac{N}{2}}F_kW_{N+1}^{mk}
+	.\]
+\textbf{(c).}
+\[
+	\lim_{N\to\infty} x_{\pm\flatfrac{N}{2}}=\lim_{N\to\infty}\pm\frac{NA}{2(N+1)}=\pm \frac{A}{2}
+	.\]
+\section*{Question 3}
+By defination of DFT:
+\[
+	F[k]=\mathrm{DFT}(\bar{f}_n)[k]=
+	\begin{cases}
+		1                                                         & k=0 \\
+		(-2-\flatfrac{\sqrt{2}}{2})+(2+\flatfrac{3\sqrt{2}}{2})j  & k=1 \\
+		j                                                         & k=2 \\
+		(-2+\flatfrac{\sqrt{2}}{2})+(-2+\flatfrac{3\sqrt{2}}{2})j & k=3 \\
+		-1                                                        & k=4 \\
+		(-2+\flatfrac{\sqrt{2}}{2})+(2-\flatfrac{3\sqrt{2}}{2})j  & k=5 \\
+		-j                                                        & k=6 \\
+		(-2-\flatfrac{\sqrt{2}}{2})-(2+\flatfrac{3\sqrt{2}}{2})j  & k=7 \\
+	\end{cases}
+	,\] which is not odd and imaginary. This is because $f(x)$ is not well-defined when implementing periodic extension. I.e.,  $f(-0.5)\ne f(-0.5+1)=f(0.5)$. To ameliorate it, the input sequence should be:
+\[
+	\bar{f}_n=\{0,\,-1,\,-1,\,-1,\,0,\,1,\,1,\,1\}
+	.\]
+Then
+\[
+	F=
+	\begin{cases}
+		0               & k=0,2,4,6 \\
+		(2+2\sqrt{2})j  & k=1       \\
+		(-2+2\sqrt{2})j & k=3       \\
+		(2-2\sqrt{2})j  & k=5       \\
+		(-2-2\sqrt{2})j & k=7       \\
+	\end{cases}
+,\] which is odd and imaginary.
+
+\section*{Question 4}
+\textbf{(a).}
+Trivially, $n=50+10-1=59$.
+\\\\
+\textbf{(b).}
+Let $y_1=x[n]\circled{50}h[n]$, $y_2=x[n]*h[n]$ for the first 5 points and $y=x[n]*h[n]$.
+\\\case{1}
+Obviously, $y[n]=y_2[n]=5$ when $0\le n\le 4$.
+\\\case{2}
+Also, $y[n]=y_1[n]=10$ when $9\le n\le 49$.
+\\\case{3}
+If $50\le n\le 54$, then $y[n]=y_1[n]-y_2[n-50]=5$.
+\\
+For other $n$, $y[n]$ could not be determined.
+\end{document}

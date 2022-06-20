@@ -1,0 +1,52 @@
+% ! Tex program = xelatex
+\documentclass{article}
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../../preamble}
+
+\graphicspath{{figures/}}
+\setlength{\headheight}{14pt}
+\fancyhead[C]{\large\textbf{Written Assignment 3}}
+\begin{document}
+% \tableofcontents
+\title{}
+% \maketitle
+\subsection*{Implementation}
+\begin{itemize}
+	\item 
+		I use \mcode{profile('info').FunctionTable(1).TotalTime} to get the running time.\footnote{I refer to \href{https://stackoverflow.com/questions/30125908}{https://stackoverflow.com/questions/30125908}.}
+	\item 
+		To minimize the variance of the results, I run every function for 20 times and calculate the average of them.
+\end{itemize}
+
+\subsection*{Analysis}
+
+When $n\gg 1$,
+\[
+	\+T(\text{For})>\+T(\text{MAT})>\+T(\text{FFT})>\+T(\text{GPU})
+.\] 
+The inequality holds by the following facts:
+\begin{enumerate}
+	\item $\+O(\text{FOR})=n^2$.
+	\item MATLAB has a optimization for matrix multiplication. Thus $\+O(\text{MAT})<n^2$ (may be $n^{1.4}$).\footnote{\href{https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms}{Basic Linear Algebra Subprograms,Wikipedia}.}
+	\item $\+O(\text{FFT})=\+O(\text{GPU})=n\log(n)$.
+\end{enumerate}
+\begin{figure}[H]
+	\centering
+	\includegraphics{../P3.eps}
+	\caption{Running time of different types of FFT}
+\end{figure}
+
+
+
+\end{document}
+

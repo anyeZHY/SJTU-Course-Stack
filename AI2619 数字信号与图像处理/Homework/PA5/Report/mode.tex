@@ -1,0 +1,45 @@
+% ! Tex program = xelatex
+\documentclass[fontset=macnew]{article}
+% 中文
+\usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../../preamble}
+
+\setlength{\headheight}{14pt}
+\fancyhead[C]{\large\textbf{Programming Assignment 5}}
+\begin{document}
+% \tableofcontents
+% \title{}
+% \maketitle
+\section*{Problem 1-3}
+实现直方图均衡化时，我使用了六种分布作为近似，其效果如下：
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=\linewidth]{gray.eps}
+	\caption{左上：原图。右上：均匀分布。左中：指数分布。右中：高斯分布。\\左下：Beta分布。右下：Gamma分布。}%
+	\label{fig:gray}
+\end{figure}
+
+为了使图像对比度明显，我将分布的均值设置为0.5左右。经比较能够发现，指数分布偏暗，因为其密度函数在0处最大；高斯分布暗处更为“明亮”；Beta分布视觉效果最好。
+
+\clearpage
+\section*{Problem 4-5}
+对RGB三通道独立做均衡化后效果如下：（除第四张图片）
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=\linewidth]{rgb.eps}
+	\caption{左上：接近均匀分布的均衡化。\\右上：接近高斯分布的均衡化。\\左下：对比度受限的自适应均衡化。\\右下：Gamma矫正。}%
+	\label{fig:rgb}
+\end{figure}
+
+若直接使用接近均匀分布的均衡化方法，会有部分区域过亮（图片左上部分）、天空颜色混杂（图片右上部分）的影响；我使用了高斯分布进行改进，对前者的优化效果明显，但天空仍有蓝绿交错、过渡的现象。使用对比度受限的方式进行直方图均衡化后，效果明显增强，整体颜色偏暗，与对原图直接进行Gamma矫正的颜色接近。
+\end{document}
+

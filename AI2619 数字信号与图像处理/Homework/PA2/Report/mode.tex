@@ -1,0 +1,113 @@
+% ! Tex program = xelatex
+\documentclass{article}
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../../preamble}
+
+\graphicspath{{../}}
+\fancyhead[C]{\Large\textbf{Programming Assignment 2}}
+
+\begin{document}
+\title{Programming Assignment 2}
+Code is available at ``PA2.m''. Also I superimpose the curves of spectrum for each process in Figure \ref{spectrum}, \ref{left} and \ref{head}.
+
+\section*{Process 1}
+Let $t_s=0.4$. Then $x[n]=1$ if $n\in\qty{0,1,\cdots, 25}$ otherwise $x[n]=0$.
+\[
+	X(\omega)
+	=
+	\sum_{n=-\infty}^{+\infty} x[n]e^{-j\omega n}
+	=
+	\sum_{n=0}^{25} e^{-j\omega n}
+	=
+	\frac{1-e^{26j\omega}}{1-e^{j\omega}}
+.\] 
+Then $\abs{X}$ reads:
+ \[
+	 \abs{X(\omega)}=
+	 \qty|\frac{\sin{13\omega}}{\sin(\flatfrac{\omega}{2})}|
+.\] 
+Figure \ref{origin} and \ref{spectrum} are the diagrams of procces 1. I use $f[n]=1$ if $n\in\qty{0,1,\cdots, 101}$ to represent rectangle function $x(t)$ approximately and use \mcode{f(1:sample:end)} to sample.
+
+
+\section*{Process 2}
+After shiftted, $x[n]=1$ if $n\in\qty{1,2, \cdots, 25}$ otherwise $x[n]=0$.
+Similarly,
+\[
+	\abs{X(\omega)}=
+	\qty|\frac{\sin{12.5\omega}}{\sin(\flatfrac{\omega}{2})}|
+.\] 
+Figure \ref{shiftted} and \ref{spectrum} are the diagrams of procces 2. There are subtle differences between 1 and 2: $x[0]=1\to x[0]=0$.
+
+
+\section*{Process 3}
+In MATLAB, I use ``\mcode{[b,a] = butter(order, Wn); filt = filtfilt(b,a,shiftted);}'' to filter the rectangle function where $\mathrm{order}=9$ and  $\mathrm{Wn}=0.1$. Then $x(t)=\+F^{-1}\qty[\flatfrac{2\sin(5\omega)}{\omega}\cdot\mathrm{Butter}(\omega_0)]$ and 
+\begin{equation}
+	\begin{aligned}
+		X(\omega)&=
+		\+F\qty{\+F^{-1}\qty[\frac{2\sin(5\omega)}{\omega}\cdot\mathrm{Butter}(\omega_0)]
+		\cdot
+		\sum_{k=-\infty}^{+\infty} \delta(t-kT_s)}
+	\end{aligned}
+\end{equation}
+This entails
+\begin{equation}
+	X(\omega)=\qty[\frac{2\sin(5\omega)}{\omega}\cdot\mathrm{Butter}(\omega_0)]*\qty[
+			\frac{2\pi}{T_s}
+			\sum_{k=-\infty}^{+\infty}
+			\delta\qty(\omega-k\frac{2\pi}{T_s})
+		]
+	\label{p3}
+\end{equation}
+It is noteworthy that the Eq.\ref{p3} has no simple analytic form and $X(\omega)$ is a periodic function. However, if $\omega_0<\flatfrac{2\pi}{T_s}$, then $X(\omega)=\flatfrac{2\sin(5\omega)}{(T_s\omega)}\cdot\mathrm{Butter}(\omega_0)$ approximately.
+Figure \ref{filtered} and \ref{spectrum} are the diagrams of procces 3.
+
+
+
+
+\newpage
+\section*{\textcolor{blue}{Appendix}}
+\begin{figure}[H]
+	\centering
+	\begin{minipage}[b]{0.46\linewidth}
+		\includegraphics[width=\linewidth]{p1_time.eps}
+		\caption{Original}
+		\label{origin}
+	\end{minipage}
+	\begin{minipage}[b]{0.46\linewidth}
+		\includegraphics[width=\linewidth]{p2_time.eps}
+		\caption{Shiftted}
+		\label{shiftted}
+	\end{minipage}
+	\begin{minipage}[b]{0.46\linewidth}
+		\includegraphics[width=\linewidth]{p3_time.eps}
+		\caption{Filtered}
+		\label{filtered}
+	\end{minipage}
+	\begin{minipage}[b]{0.46\linewidth}
+		\includegraphics[width=\linewidth]{spectrum.eps}
+		\caption{Spectrum}
+		\label{spectrum}
+	\end{minipage}
+	\begin{minipage}[b]{0.46\linewidth}
+		\includegraphics[width=\linewidth]{spectrum_prime.eps}
+		\caption{Spectrum (Left)}
+		\label{left}
+	\end{minipage}
+	\begin{minipage}[b]{0.46\linewidth}
+		\includegraphics[width=\linewidth]{spectrum_prime2.eps}
+		\caption{Spectrum (The highest peak)}
+		\label{head}
+	\end{minipage}
+\end{figure}
+\end{document}
+

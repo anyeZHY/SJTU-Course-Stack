@@ -1,0 +1,93 @@
+% ! Tex program = xelatex
+\documentclass{article}
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../preamble}
+
+\graphicspath{{figures/}}
+\setlength{\headheight}{14pt}
+\fancyhead[C]{\large\textbf{Written Assignment 2}}
+\begin{document}
+% \tableofcontents
+\title{Written Assignment 2}
+% \maketitle
+\section*{Question 1}
+\textbf{(a).}
+By defination,
+\[
+	\begin{aligned}
+			&\tilde{X}[k]=\sum_{n=0}^{N-1}\tilde{x}[n]e^{-\flatfrac{2jk\pi n}{N}}
+			,\,
+			&\tilde{X}_3[k]=\sum_{n=0}^{3N-1}\tilde{x}[n]e^{-\flatfrac{2jk\pi n}{3N}}
+	\end{aligned}
+.\]
+Thus
+\[
+	\begin{aligned}
+		\tilde{X}_3[k]
+		&=
+		\sum_{n=0}^{N-1}\tilde{x}[n]e^{-\flatfrac{2jk\pi n}{3N}}
+		\qty(1+e^{-\flatfrac{2jk\pi}{3}}+e^{-\flatfrac{4jk\pi}{3}})
+		\\[6pt]&=
+		\begin{cases}
+			3\tilde{X}[\flatfrac{k}{3}] &\mbox{if }k\equiv 0 \pmod{3} \\
+			0 &\mbox{otherwise}
+		\end{cases}
+	\end{aligned}
+.\]
+\textbf{(b).}
+\[
+	\tilde{X}[k]=
+	\begin{cases}
+		3 &\mbox{if }k\equiv 0 \pmod{2} \\
+		-1 &\mbox{otherwise}
+	\end{cases}
+	\mbox{ and }\,
+	\tilde{X}_3[k]=
+	\begin{cases}
+		9 & \mbox{if } k\equiv 0 \pmod{6}\\
+		-3 & \mbox{if }k\equiv 3 \pmod{6}\\
+		0 &\mbox{otherwise}
+	\end{cases}
+.\] 
+
+\section*{Question 2}
+\textbf{(a).}
+Apparently, $\abs{\alpha}<1$.
+Then 
+\[
+	X(e^{j\omega})=\sum_{n=0}^{+\infty}\alpha^ne^{j\omega n}=\frac{1}{1-\alpha e^{j\omega n}}
+.\]
+
+\textbf{(b).}
+Firstly,
+\[
+	\tilde{x}[n]=\alpha^n\sum_{r=0}^{+\infty}\alpha^{rN}=\frac{\alpha^n}{1-\alpha^N}
+.\] 
+Then
+\[
+	\tilde{X}[k]=
+	\sum_{n=0}^{N-1}\frac{\alpha^n}{1-\alpha^N}e^{-\flatfrac{2jk\pi n}{N}}
+	=
+	\frac{1-\alpha^Ne^{2j\pi k}}{\qty(1-\alpha^N)\qty(1-\alpha e^{\flatfrac{-2j\pi k}{N}})}
+	=
+	\frac{1}{1-\alpha e^{\flatfrac{-2j\pi k}{N}}}
+.\] 
+
+\textbf{(c).}
+$\tilde{X}[k]$ is the sampling of $X(e^{j\omega})$: 
+\[
+	\omega\to \frac{2k\pi}{N}
+.\]
+
+\end{document}
+

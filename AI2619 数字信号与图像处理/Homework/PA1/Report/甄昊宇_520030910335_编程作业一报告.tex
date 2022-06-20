@@ -1,0 +1,225 @@
+%! Tex program = xelatex
+\documentclass{article}
+%中文
+\usepackage[UTF8]{ctex}
+%数学公式
+\usepackage{amsmath,amssymb}
+%\usepackage{ntheorem}
+\usepackage{mdframed} %公式框1
+% e.g., \newmdtheoremenv{theorem}{Theorem}
+\usepackage{amsthm}
+%边界
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=2.5cm,right=2.5cm,marginparwidth=1.75cm]{geometry}%table package
+%Table
+\usepackage{multirow,booktabs}
+\usepackage{makecell}
+%字体颜色
+\usepackage{color}
+\usepackage[dvipsnames]{xcolor}  % 更全的色系
+%代码
+\usepackage[OT1]{fontenc}
+% MATLAB 代码风格
+\usepackage[framed,numbered,autolinebreaks,useliterate]{/Users/anye_zhenhaoyu/Desktop/Latex/mcode}
+\usepackage{listings}
+\lstset{frame=none,aboveskip=5pt,belowskip=4pt}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{pythonhighlight} % Python
+%插图
+\usepackage{graphicx}
+%改变item格式
+\usepackage{enumerate}
+%物理
+\usepackage{physics}
+%extra arrows
+\usepackage{extarrows}
+% caption（居中指令）
+%\usepackage[justification=centering]{caption}
+\usepackage{caption}
+% htpb
+\usepackage{stfloats}
+% pdf 拼接
+\usepackage{pdfpages}
+% 超链接url
+\usepackage{url}
+\usepackage{multicol}
+\setlength\columnsep{1.5cm}
+\columnseprule=1pt
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+% --------------definations-------------- %
+\def\*#1{\boldsymbol{#1}}
+\def\+#1{\mathcal{#1}} 
+\def\-#1{\mathrm{#1}}
+% Domains
+\def\RR{\mathbb{R}}
+\def\CC{\mathbb{C}}
+\def\NN{\mathbb{N}}
+\def\ZZ{\mathbb{Z}}
+% Newcommand
+\newcommand{\inner}[2]{\langle #1,#2\rangle} 
+\renewcommand{\mid}{\;\middle\vert\;} 
+\newcommand{\cmid}{\,:\,}
+\newcommand{\numP}{\#\mathbf{P}} 
+\renewcommand{\P}{\mathbf{P}}
+\newcommand{\defeq}{\triangleq}
+\newcommand{\Var}[2][]{\mathbf{Var}_{#1}\left[#2\right]}
+\newcommand{\E}[2][]{\mathbf{E}_{#1}\left[#2\right]}
+\renewcommand{\emptyset}{\varnothing}
+\newcommand{\ol}{\overline}
+\newcommand{\argmin}{\mathop{\arg\min}}
+\newcommand{\argmax}{\mathop{\arg\max}}
+
+\def\Esolve{\textcolor{blue}{Solve: }}
+\def\Eproof{\textcolor{blue}{Proof: }}
+\def\case#1{\textcolor{blue}{Case \uppercase\expandafter{\romannumeral#1}: }}
+
+\newmdtheoremenv{lemma}{Lemma}
+\newmdtheoremenv{theorem}{\textcolor{red}{Theorem}}
+\newmdtheoremenv{defi}{\textcolor{blue}{Definition}}
+
+\newenvironment{md}{\begin{mdframed}}{\end{mdframed}}
+
+\graphicspath{{../}}
+
+\begin{document}
+\title{编程作业1简明报告}
+\author{Haoyu Zhen}
+\maketitle
+\begin{multicols}{2}
+\section{添加模糊及噪音}
+\subsection{模糊化}
+利用卷积运算即可制造模糊，
+\begin{lstlisting}
+% Blurred image
+PSF = ones([5,5])*0.04;
+% blurred = conv2(origin,PSF);
+% size = 516;
+blurred = conv2(origin,PSF,'same');
+size = 512;
+\end{lstlisting}
+效果如图(\ref{blur})所示。
+值得说明的是，我传入了`same'这个参数，以使得前后图片大小一致，但这会导致边缘信息的丢失。因此在恢复图像时，图片边缘会出现“方格”现象，如图(\ref{wiener})所示，若不传入`same'参数，后续的逆滤波会取得更好的效果。
+\subsection{噪音化}
+使用awgn函数可直接为图片添加噪音，对应代码如下：
+\begin{lstlisting}
+% Blurred and noised image
+bn30 = awgn(blurred,30,'measured');
+bn20 = awgn(blurred,20,'measured');
+bn10 = awgn(blurred,10,'measured');
+\end{lstlisting}
+效果如图(\ref{noise})所示。
+
+\section{图像复原}
+\subsection{直接逆滤波}
+在编程上可以用两种方式实现，基于定义，利用傅立叶变换进行除法；或者利用deconvwnr函数，并将nsr设为0，(默认值)。
+我选择了后者作为实现方式，前者在源代码中以注释形式给出：
+\begin{lstlisting}
+% Implement filtering directly
+% F_SPF = fft2(PSF,size,size);
+% r1 = ifft2(fft2(bn10)./F_SPF);
+% r2 = ifft2(fft2(bn20)./F_SPF);
+% r3 = ifft2(fft2(bn30)./F_SPF);
+% For simplicity, we could use deconvwnr(bn, PSF)
+df1 = deconvwnr(bn10, PSF);
+df2 = deconvwnr(bn20, PSF);
+df3 = deconvwnr(bn30, PSF);
+\end{lstlisting}
+效果如图(\ref{direct})所示。
+
+
+
+\subsection{Wiener 滤波}
+使用MATLAB中deconvwnr函数可一定程度的去除噪音与模糊，代码如下：
+\begin{lstlisting}
+% Implement wiener filtering
+wnr1 = deconvwnr(bn10, PSF, 0.1);
+wnr2 = deconvwnr(bn20, PSF, 0.01);
+wnr3 = deconvwnr(bn30, PSF, 0.001);
+\end{lstlisting}
+效果如图(\ref{wiener})所示。
+\subsection{伪-逆滤波}
+“Image Restoration.pdf”第29页给出了pseudo-inverse filtering方法，实现如下，不过源代码中被我所注释并附在于最后。
+\begin{lstlisting}
+% implement pseudo-inverse filtering
+% Here \epsilon = 0.5
+F_PSF = fft2(PSF,size,size);
+H = (abs(F_PSF)>0.5)./F_PSF;
+F_bn30 = fft2(bn30);
+F_bn20 = fft2(bn20);
+F_bn10 = fft2(bn10);
+rr1 = ifft2(F_bn10.*H);
+rr2 = ifft2(F_bn20.*H);
+rr3 = ifft2(F_bn30.*H);
+\end{lstlisting}
+\end{multicols}
+
+\newpage
+\section*{\centering\textcolor{blue}{Appendix}}
+\begin{figure}[H]
+	\centering
+	\begin{minipage}[b]{0.46\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{baboon.bmp}
+		\caption{Original image}
+	\end{minipage}
+	\begin{minipage}[b]{0.46\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{blurred.bmp}
+		\caption{blurred image}
+		\label{blur}
+	\end{minipage}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{bn3.bmp}
+		\caption*{30dB}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{bn2.bmp}
+		\caption*{20dB}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{bn1.bmp}
+		\caption*{10dB}
+	\end{minipage}
+	\caption{Blurred and noised image}
+	\label{noise}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{df3.bmp}
+		\caption*{Restoration-30dB}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{df2.bmp}
+		\caption*{Restoration-20dB}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{df1.bmp}
+		\caption*{Restoration-10dB}
+	\end{minipage}
+	\caption{Naive inverse filtering}
+	\label{direct}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{wnr3.bmp}
+		\caption*{Restoration-30dB}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{wnr2.bmp}
+		\caption*{Restoration-20dB}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth,bb=0 0 20cm 20cm]{wnr1.bmp}
+		\caption*{Restoration-10dB}
+	\end{minipage}
+	\caption{Wiener filtering}
+	\label{wiener}
+\end{figure}
+
+\end{document}
+
+

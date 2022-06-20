@@ -1,0 +1,96 @@
+% ! Tex program = xelatex
+\documentclass[fontset=macnew]{article}
+\PassOptionsToPackage{quiet}{fontspec}% (or try silent)
+% 中文
+\usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../../preamble}
+
+\graphicspath{{../甄昊宇_520030910335/}}
+\setlength{\headheight}{14.5pt}
+\setlength{\parindent}{2pt}
+\fancyhead[C]{\large\textbf{Programming Assignment 4}}
+\begin{document}
+% \tableofcontents
+% \title{}
+% \maketitle
+\section{简介}
+我选择了歌曲 \textit{Five Hundred Miles} (Justin Timberlake \textit{et al}) 的前半段来完成我此次的编程作业，
+该片段内包含纯音乐以及人声。
+
+\section{任务1-3}
+原歌曲的时域图和STFT时域图如图\ref{origin}所示。此外，经过不同频率的下采样，并差值恢复的音频，其时域、STFT时域图见 \ref{down} 与 \ref{int} 。
+经过对比观察可以发现：采样频率越低，STFT时域图高幅值部分越呈“弥散”状；经线性差值后该现象消失，甚至比原音频更不明显。
+
+从音质效果来看，下采样有明显的粗糙感。而对于插值而言，我发现纯音乐部分与原声变化不大，然而人声部分却有明显的高频感 (声音变尖变细)。
+
+注：
+我使用了\mcode{audio_ds = resample(audio, f, Fs);}以进行下采样；
+
+用 \mcode{pos = linspace(1,length(audio_ds),L);} \mcode{audio_itr = interp1(audio_ds, pos);} 来进行插值。
+
+\section{任务4}
+我用\mcode{butter}函数与\mcode{filtfilt}进行滤波以处理信号。在源代码中，可以调节不同参数以实现带通、带阻、高通和低通滤波。我所提交的“filt.wav”音频用以下方式生成：
+\mcode{[b,a] = butter(1, [2/Fs*100 2/Fs*1000]);}
+\mcode{filt = filtfilt(b,a,audio) * 2;}。
+这是一个频率为 [100,1000]Hz 的带通滤波器；其作用是使音频会更显低沉。
+
+\section{附录}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.55\linewidth]{origin.eps}
+	\caption{Original}
+	\label{origin}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth]{downsample_5000.eps}
+		\caption*{$f=5k$Hz}
+		\label{down5}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth]{downsample_10000.eps}
+		\caption*{$f=10k$Hz}
+		\label{down10}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth]{downsample_15000.eps}
+		\caption*{$f=15k$Hz}
+		\label{down15}
+	\end{minipage}
+	\caption{Downsampling}
+	\label{down}
+\end{figure}
+\begin{figure}[htbp]
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth]{interpolate_5000.eps}
+		\caption*{$f=5k$Hz}
+		\label{int5}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth]{interpolate_10000.eps}
+		\caption*{$f=10k$Hz}
+		\label{int10}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\linewidth}
+		\includegraphics[width=\linewidth]{interpolate_15000.eps}
+		\caption*{$f=15k$Hz}
+		\label{int15}
+	\end{minipage}
+	\caption{Interpolating}
+	\label{int}
+\end{figure}
+
+
+\end{document}
+

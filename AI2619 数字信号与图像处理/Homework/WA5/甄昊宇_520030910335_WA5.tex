@@ -1,0 +1,140 @@
+% ! Tex program = xelatex
+\documentclass[fontset=macnew]{article}
+\PassOptionsToPackage{quiet}{fontspec}% (or try silent)
+% 中文
+\usepackage[UTF8]{ctex}
+
+% For more choices
+% \input{/Users/anye_zhenhaoyu/Desktop/preamble.tex}
+% \input{/Users/anye_zhenhaoyu/Desktop/ln_preamble.tex}
+
+% \input{/path/preamble.tex}
+% \input{/path/ln_preamble.tex}
+
+% On my MAC's Desktop
+\input{../preamble}
+
+\graphicspath{{figures/}}
+\setlength{\headheight}{14pt}
+\fancyhead[C]{\large\textbf{Written Assignment 5}}
+\begin{document}
+% \tableofcontents
+% \title{}
+% \maketitle
+\section*{Question 1}
+依定义我们有：
+\[
+    p_z\dd z = p_r\dd r \qor \int_0^z p_z\dd z = \int_0^r p_r\dd r
+\] 其中 $p_r=2-2r$ 且 $p_z=4z$ 如果 $z<0.5$ 否则 $p_z=4-4z$。
+因此
+\[
+    \begin{cases}
+		-r^2+2r=2z^2 & \text{if }z<0.5  \\
+		(r-1)^2=2(z-1)^2 & \text{otherwise} \\
+    \end{cases}
+\] 于是有
+\[
+    \begin{cases}
+		z=\sqrt{\dfrac{-r^2+2r}{2}} & \text{if }r<1-\dfrac{\sqrt{2}}{2}\\[9pt]
+		z=\dfrac{\sqrt{2}}{2}(r-1)+1 & \text{if }1-\dfrac{\sqrt{2}}{2}\le r\le 1 \\
+    \end{cases}
+.\] 
+
+\section*{Question 2}
+\subsection*{(a \& b)}
+根据定义，我们可以得到：
+\[
+    \begin{aligned}
+		&\sum_x\sum_y\sum_s\sum_t w(s,t)f(x+s,y+t)
+		\\=&
+		\sum_s\sum_t\sum_x\sum_y w(s,t)f(x+s,y+t)
+		\\=&
+		\sum_s\sum_t w(s,t) \sum_x\sum_y f(x+s,y+t)
+		\\=&
+		\sum_s\sum_t w(s,t) \sum_x\sum_y f(x,y)
+		\\=&
+		\sum_s\sum_t w(s,t)\times \+I
+		\ \ \ \ \ = 0
+    \end{aligned}
+\] 其中第四行等式成立的原因是我们对图片进行了补零操作。同时由于零点对称性，我们可以直接用$\sum_s$或 $\sum_t$代替$\sum_{s=\pm a}^{\mp a}$ 或$\sum_{t=\pm a}^{\mp a}$。故该题两小问结果皆为0。
+
+\section*{Question 3}
+Proof of $f(x,y)*h(x,y)\iff F(u,v)H(u,v)$:
+\[
+	\begin{aligned}
+		&\int_\+X\int_\+Y\int_\+S\int_\+T
+		f(s,t)h(x-s,y-t)\exp\big[-j2\pi(ux+vy)\big]
+		\dd{t}\dd{s}\dd{y}\dd{x}
+		\\[6pt]=&
+		\int_\+S\int_\+T
+		f(s,t)
+		\int_\+X\int_\+Y
+		h(x-s,y-t)\exp\big[-j2\pi(ux+vy)\big]
+		\dd{y}\dd{x}\dd{t}\dd{s}
+		\\[6pt]=&
+		\int_\+S\int_\+T
+		f(s,t)H(u,v)\exp\big[-j2\pi(us+vt)\big]
+		\dd{t}\dd{s}
+		\\[6pt]=&
+		F(u,v)H(u,v)
+	\end{aligned}
+\] 其中第三行应用了“时域平移性质”。
+
+Proof of $f(x,y)*h(x,y)\iff F(u,v)H(u,v)$:
+\[
+	\begin{aligned}
+		&\int_\+U\int_\+V\int_\+S\int_\+T
+		\frac{1}{4\pi^2}
+		F(s,t)H(u-s,v-t)\exp\big[j2\pi(ux+vy)\big]
+		\dd{t}\dd{s}\dd{v}\dd{u}
+		\\[6pt]=&
+		\int_\+S\int_\+T
+		\frac{1}{4\pi^2}
+		F(s,t)
+		\int_\+U\int_\+V
+		H(u-s,v-t)\exp\big[j2\pi(ux+vy)\big]
+		\dd{v}\dd{u}\dd{t}\dd{s}
+		\\[6pt]=&
+		\int_\+S\int_\+T
+		\frac{1}{2\pi}
+		F(s,t)h(x,y)\exp\big[j2\pi(xs+yt)\big]
+		\dd{t}\dd{s}
+		\\[6pt]=&
+		f(x,y)h(x,y)
+	\end{aligned}
+\]类似的，我使用了频移性质。
+
+\section*{Question 4}
+\subsection*{(a)}
+结果为：
+\[
+	\mqty{
+	0 & \flatfrac{1}{4} & 0 & 0 & 0 & 0 & 0 \\
+	\flatfrac{1}{4} & \flatfrac{1}{4} & \flatfrac{1}{2} & 0 & 0 & 0 & 0 \\
+	\flatfrac{1}{4} & \flatfrac{1}{2} & \flatfrac{1}{2} & \flatfrac{1}{2} & 0 & 0 & 0 \\
+	0 & \flatfrac{1}{2} & \flatfrac{1}{2} & \flatfrac{1}{2} & \flatfrac{1}{2} & \flatfrac{1}{4} & 0 \\
+	0 & 0 & \flatfrac{3}{4} & \flatfrac{3}{4} & \flatfrac{1}{2} & \flatfrac{1}{4} & \flatfrac{1}{4}\\
+	0 & \flatfrac{1}{2} & \flatfrac{1}{2} & \flatfrac{1}{2} & \flatfrac{1}{2} & \flatfrac{1}{4} & 0 \\
+	\flatfrac{1}{4} & \flatfrac{1}{2} & \flatfrac{1}{2} & \flatfrac{1}{2} & 0 & 0 & 0 \\
+	\flatfrac{1}{4} & \flatfrac{1}{4} & \flatfrac{1}{2} & 0 & 0 & 0 & 0 \\
+	0 & \flatfrac{1}{4} & 0 & 0 & 0 & 0 & 0 \\
+}
+\] 
+这里我设置了padding=2以保留全部信息。
+
+\subsection*{(b)}
+容易得到：
+\[
+	h=\mqty{
+		0 & \flatfrac{1}{4} & 0 \\
+		\flatfrac{1}{4} & 0 & \flatfrac{1}{4}\\
+		0 & \flatfrac{1}{4} & 0 
+	}
+	\qand
+	H(u,v)=\frac{1}{2}\cos(2\pi\frac{u}{7})+\frac{1}{2}\cos(2\pi\frac{v}{9})
+\]
+\subsection*{(c)}
+显然$H$是一个“低通滤波器”，因为原点处幅值响应为1；此外，中频、高频部分幅值响应小于一，起抑制效果。
+
+\end{document}
+
