@@ -18,4 +18,8 @@
 
 #### Homework 5
 
+- Score: 100/100
+
 #### Homework 6
+
+- Score: 100/100

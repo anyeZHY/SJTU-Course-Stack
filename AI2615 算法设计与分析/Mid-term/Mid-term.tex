@@ -1,0 +1,237 @@
+% ! Tex program = xelatex
+\documentclass{article}
+% \PassOptionsToPackage{quiet}{fontspec}% (or try silent)
+% 中文
+% \usepackage[UTF8]{ctex}
+
+% On my MAC's Desktop
+\input{../latex/preamble}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+% \tableofcontents
+\title{\vspace{-0.7em}Edmonds’ Blossom Algorithm (Mid-Exam of AI2615)}
+\maketitle
+
+\section*{Problem 1}
+``$\Longrightarrow$'': trivial.
+
+\vspace{0.5em}
+If a $M$-augmenting path $p=v_1v_2\cdots v_n$ exists, then 
+\[
+	\big(M-\{e|e\in p\land e\in M\}\big)
+	\cup
+	\{e|e\in p\land e\notin M\}
+\]
+is a matching larger than $M$.
+
+\vspace{1em}
+``$\Longleftarrow$'':
+
+\vspace{0.5em}
+Proof by contradiction. If $M$ is not a maximum matching and let $M'$ be a maximum one.
+Then we analyse the property of $M^\dagger\defeq(M\cup M')-(M\cap M')$. For simplicity, we could count $\+M$ as a graph (indeed, it is a set of edges).
+\begin{enumerate}
+	\item 
+		$\forall e\in M^\dagger$, $e\in M$ XOR $e\in M'$.
+	\item 
+		The paths in $M^\dagger$ are alternating. I.e., for all vertex $v$ in $M^\dagger$, $v$ could be incident to \textbf{at most one} edge from $M$ and \textbf{at most one} edge from $M'$. 
+	\item
+		By 2., $\forall$ connected component $C$ in $M^\dagger$,$C$ is a path.
+	\item
+		There exists a connected component $\+C$ in $M^\dagger$, such that 
+		\[
+			\big|\{e|e\in \+C\land e\in M'\}\big|
+			>
+			\big|\{e|e\in \+C\land e\in M\}\big|
+		.\]
+		(Beacuse $\abs{M'}>\abs{M}$.)
+	\item
+		The both ends of $\+C$ (in 4.) is in $M'$.
+\end{enumerate}
+Finally, we construct a augmenting path $\+C$ for $M$, which leads to a contradition.
+
+\section*{Problem 2}
+Contract the cycle $v_1v_2\cdots v_{2k+1}v_1$ to $u$.
+
+\vspace{0.5em}
+``$\Longrightarrow$'':
+
+\vspace{0.5em}
+Proof by contradiction.
+Suppose that there exists a matching $M'$ of $G'$ such that $\abs{M'}>\abs{M-C}$.
+
+Then there exists $C_{\-{new}}$ in $G$ such that $C_{\-{new}}$ meet no other edge in $M'$, because ``$2k+1=2\times k +1$''. LHS: the number of vertices in $C_{\-{new}}$. RHS: 1 represents $u$ and $2\times k$ represents the matched vertices by $C_{\-{new}}$.
+
+Then $M'\cup C_{\-{new}}$ is a larger matching of $G$. Contradiction!
+
+\vspace{1em}
+``$\Longleftarrow$'':
+
+\vspace{0.5em}
+Similarly, assume that there exists a matching $M'$ for $G$ such that $\abs{M'}>\abs{M}$.
+
+Then in $M'$, there exists a vertex $v$ who is not matched by $C$. Let this $v$ be $u$ and contract the cycle $C$.
+We get a larger matching of $G'$. Contradiction.
+
+\section*{Problem 3}
+M-alternating forests (MAF) exist by the fact that empty set is an MAF.
+Now we find a maximal one greedily:
+\begin{algorithm}[htbp]
+	\caption{Find an maximal forest $\defeq\+F(G,M)$}
+	\label{maf}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE A graph $G$ whose matching is $M$
+		\STATE $F_{\max}\gets \emptyset$
+		\STATE Select a root $r$ in $G$. $T\gets (\{r\},\emptyset)$.
+		\WHILE{$\exists$ a alternating path $p$ begins and ends at outer vertices.}
+		\STATE Insert $p$ into $T$
+		\STATE Update $O_T$ and $I_T$
+		\COMMENT{$O_T$ represents the outer vertices in $T$ ($I_T$: inner)}
+		\STATE Delete all edges (not in $T$) which are incident with the inner vertex
+		\ENDWHILE
+		\STATE Generate a new graph $H$ and a matching $M_{\mathrm{new}}$ by deleting the tree $T$ from $G$
+		\STATE Merge $T$ and $\+F(H,M_{\mathrm{new}})$ $\longrightarrow$ $F_{\max}$
+		\COMMENT{Recursion here}
+		\RETURN $F_{\max}$
+	\end{algorithmic} 
+\end{algorithm}
+
+\textbf{Correctness:} we just need to prove that $T$ is ``maximal''.
+\begin{itemize}
+	\item 
+		The root of $T$ is the end points of a  maximal augmenting path $\implies$ T will not be the sub-tree of other maximal alternating tree.
+	\item 
+		There is no alternating path could be added into $T$.
+\end{itemize}
+
+\textbf{Complexity:} (We bound the complexity \textbf{LOOSELY})
+\begin{itemize}
+	\item 
+		Find the root: $\+O(nm)$.
+	\item
+		Delete and insert (with the idea of charging): $\+O(m)$.
+	\item
+		Find the alternating path (line 3; we use DFS here): $\+O(nm)$.
+	\item
+		Update $O_T$ and  $I_T$:  $\+O(n)$.
+\end{itemize}
+
+\section*{Problem 4}
+The augmenting path should begin at a root $r_1$ and end at another one ($r_2$).
+
+First I introduce my intuition: as figure 4 shown (in \texttt{edmonds.pdf}), we need to go \textbf{down} and then go \textbf{up} along several vertices. The conversion from down to up needs 2 consecutive outer vertices.
+
+\textit{Proof}.
+\begin{itemize}
+	\item Define going up and down formally. 
+
+		Going down: if we are at a inner vertex, then we will choose an edge in $M$. For outer vertex, choose an dege whiche are not in $M$. Otherwise we are going up.
+	\item
+		Now we consider some possible cases.
+	\item
+		Inner $\to$ inner, ``$\to$'' is a edge in $M$. Not exists. Because this leads to a cernario that a vertex is matched twice.
+	\item
+		Inner $\to$ outer OR outer $\to$ inner. This does not change the upward and downward trend.
+	\item
+		Outer $\to$ outer, here ``$\to$'' is a edge not in $M$. Thus, at the second outer vertex, we need to choose an edge in $M$. We go up now!
+\end{itemize}
+$\hfill\square$
+
+\section*{Problem 5}
+Quite trivial!
+
+\vspace{1em}If $u$ and $v$ belong to distinct components of $F$:
+
+\vspace{0.3em}
+We construct the $M$-augmenting path directly: $r_1\to u-v \to r_2$ where $u(v)$ belongs to the tree with root $r_1(r_2)$.
+
+\vspace{1em}If $u$ and $v$ belong to the same component of $F$:
+
+\vspace{0.3em}
+Obviously that the path in tree from $u$ to $v$ is even (by alternating property). Thus we have an odd cycle.
+
+\section*{Problem 6}
+My idea/intuition: I want to design a algorithm by which we could eradicate the augmenting path greedily and recursively. Why to contract the blossoms? Because we wan to find the path easily.
+\begin{algorithm}[H]
+	\caption{Find the augmenting path $\defeq \+P(G,M)$}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\label{path}
+		\REQUIRE A matching $M$ of the graph $G$
+		\ENSURE Path $p$
+		\STATE Construct the forest $F(G,M)$
+		\STATE Find an edge whose endpoints are 2 outer vertices $u$ and $v$. If not, \textbf{return} $\emptyset$
+		\IF{$u$ and  $v$ belong to the same component of $F$}
+		\RETURN $r_1\to u-v \to r_2$
+		\ELSE
+		\STATE We could find an odd cycle $C$ with root $r$
+		\STATE $v\gets \min_{u\in V(C)}d(u,r)$
+		\COMMENT{Find vertex whose distance to $r$ is minimum}
+		\STATE $M'\gets (M-p)\cup\{e|e\notin M\land e\in p\}$ where $p$ is the path from  $r$ to $v$
+		\STATE Now we could contract the cycle ``safely'' $\to\ G'$
+		\COMMENT{Satisfy the requirement in P2.}
+		\STATE $P'\gets \+P(G',M')$
+		\STATE ``Interpret'' $P'$: \\
+		If $P'$ contains the vertex contracted from a cycle $C$, find an even path in $C$ to connect $P'$ to $P$
+		\RETURN $P$
+		\ENDIF
+	\end{algorithmic} 
+\end{algorithm}
+Finally, we design an agorithm to find a maximum path. Forany given $G$,
+
+\begin{algorithm}[H]
+	\caption{Find the maximum matching}
+	\label{matching}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\renewcommand{\algorithmiccomment}[1]{\hfill\textit{\textcolor{blue}{\##1}}}
+		\REQUIRE 
+		\ENSURE 
+		\STATE $M\gets \{e\}$ (we pick $e$ randomly)
+		\WHILE{$p\gets \+P(G,M)$ is not an emptyset}
+		\STATE Update $M$: eradicate this augmenting path. (Use the method in P1.)
+		\ENDWHILE
+		\RETURN $M$
+	\end{algorithmic}
+\end{algorithm}
+\textbf{Soundness}:
+\begin{enumerate}
+	\item 
+		Algo \ref{matching} holds naturally by P1. Also, $M$ is strictly increasing and bounded by $\abs{E}$ (Algo \ref{matching} will terminate).
+	\item
+		Now we analyse Algo \ref{path}.
+		\begin{itemize}
+			\item
+				Line 7-8: $v$ represents the vertex in cycle who meets other edges. So we update $M$ without changing its cardinality.
+			\item
+				Line 9: $\+P(G',M')$ exists iff $\+P(G,M)$ exists
+			\item
+				Line 10-11: convert the augmenting path  $P'$ in  $G'$ to a path $G$.
+		\end{itemize}
+\end{enumerate}
+
+\vspace{1em}
+\textbf{Complexity}:
+\begin{itemize}
+	\item 
+		While-loop in Algo \ref{matching} is bounded by $\abs{E}$.
+	\item
+		Algo \ref{path} is dominated by $\+F(G,M)$.
+\end{itemize}
+Thus the complexity is $\+O(n^2m)$.
+
+\section*{Reference}
+\begin{enumerate}
+	\item \url{https://www14.in.tum.de/lehre/2015WS/ea/split/sec-Augmenting-Paths-for-Matchings-single.pdf} (for problem 1).
+	\item \url{https://en.wikipedia.org/wiki/Blossom_algorithm} (for problem 6).
+\end{enumerate}
+
+\end{document}
